@@ -16,7 +16,6 @@ import images from "../../assets/img";
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
 const NavBar = () => {
-  //----USESTATE COMPONNTS
   const [discover, setDiscover] = useState(false);
   const [help, setHelp] = useState(false);
   const [notification, setNotification] = useState(false);
@@ -75,6 +74,8 @@ const NavBar = () => {
     }
   };
 
+  const { currentAccount, connectWallet } = useContext(NFTMarketplaceContext);
+
   return (
     <div className={Style.navbar}>
       <div className={Style.navbar_container}>
@@ -122,20 +123,22 @@ const NavBar = () => {
           </div>
 
           {/* Nút Tạo */}
-          {/* <div className={Style.navbar_container_right_button}>
-            {currentAccount == "" ? (
-              <Button btnName="Kết nối ví" handleClick={() => connectWallet()} />
-            ) : (
-              
-            )}
-          </div> */}
+                {currentAccount}
           <div className={Style.navbar_container_right_button}>
-            <Button
-              btnName="Tạo mới"
-              handleClick={() => router.push("/uploadNFT")}
-            />
+            {currentAccount == "" ? (
+              <Button
+                btnName="Kết nối ví"
+                handleClick={() => connectWallet()}
+              />
+            ) : (
+              <div className={Style.navbar_container_right_button}>
+                <Button
+                  btnName="Tạo mới"
+                  handleClick={() => router.push("/uploadNFT")}
+                />
+              </div>
+            )}
           </div>
-
           {/* Hồ sơ người dùng */}
 
           <div className={Style.navbar_container_right_profile_box}>

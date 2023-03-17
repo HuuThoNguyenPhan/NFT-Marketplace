@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import Image from "next/image";
 
-//INTERNAL IMPORT
 import Style from "../styles/connectWallet.module.css";
 import images from "../assets/img";
 
-//IMPORT FROM SMART CONTRACT
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 const connectWallet = () => {
   const [activeBtn, setActiveBtn] = useState(1);

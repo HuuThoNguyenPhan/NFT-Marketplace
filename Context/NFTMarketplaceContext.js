@@ -1,29 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, createContext } from "react";
 import Web3Modal from "web3modal";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 
-
-// const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
-
-const projectId = "your id";
-const projectSecretKey = "your key";
-const auth = `Basic ${Buffer.from(`${projectId}:${projectSecretKey}`).toString(
-  "base64"
-)}`;
-
+const JWT =
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIxMDQ1MDQyYy03Y2FlLTQzZGMtYTliZS0wMDNmMmVjZDYzNDYiLCJlbWFpbCI6InRob3BybzIwMDFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImE3OWQ2NDVkYjQyN2U4YWI5YTE5Iiwic2NvcGVkS2V5U2VjcmV0IjoiZjE0ODM1N2I5ZDA3MmIxZjMzZjlkM2U2YmFiODg4MWYwZGIxNjBlMjg0ZWQ3MDNhNDFlOTY3YTgzZTQ3N2RlNCIsImlhdCI6MTY3OTA3NDQ2Mn0.uK8viuDe9nYyzR2R_TGZMN98rfd1eZjfmWjMG3tNepI";
 const subdomain = "your subdomain";
-
-const client = ipfsHttpClient({
-  host: "infura-ipfs.io",
-  port: 5001,
-  protocol: "https",
-  headers: {
-    authorization: auth,
-  },
-});
 
 //INTERNAL  IMPORT
 import {
@@ -43,13 +27,14 @@ const fetchContract = (signerOrProvider) =>
 
 //---CONNECTING WITH SMART CONTRACT
 
-const connectingWithSmartContract = async () => {
+const connectingWithSmartContract = async (addListeners) => {
   try {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
+
     const provider = new ethers.providers.Web3Provider(connection);
     const signer = provider.getSigner();
-
+    addListeners(connection);
     const contract = fetchContract(signer);
     return contract;
   } catch (error) {
@@ -57,19 +42,27 @@ const connectingWithSmartContract = async () => {
   }
 };
 
-export const NFTMarketplaceContext = React.createContext();
+export const NFTMarketplaceContext = createContext();
 
 export const NFTMarketplaceProvider = ({ children }) => {
   const titleData = "Discover, collect, and sell NFTs";
 
-  //------USESTAT
+  //------USESTATE
   const [error, setError] = useState("");
   const [openError, setOpenError] = useState(false);
   const [currentAccount, setCurrentAccount] = useState("");
   const [accountBalance, setAccountBalance] = useState("");
   const router = useRouter();
+  const [selectedFile, setSelectedFile] = useState();
 
-  //---CHECK IF WALLET IS CONNECTD
+  // --- Đổi ví
+  const addListeners = async (web3ModalProvider) => {
+    web3ModalProvider.on("accountsChanged", (accounts) => {
+      setCurrentAccount(accounts);
+    });
+  };
+
+  //---CHECK IF WALLET IS CONNECTED
   console.log(currentAccount);
   const checkIfWalletConnected = async () => {
     try {
@@ -101,8 +94,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
   };
 
   // useEffect(() => {
-  //   // checkIfWalletConnected();
-  //   // connectingWithSmartContract();
+  //   checkIfWalletConnected();
+  //   connectingWithSmartContract();
   // }, []);
 
   //---CONNET WALLET FUNCTION
@@ -119,7 +112,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
       setCurrentAccount(accounts[0]);
 
       // window.location.reload();
-      connectingWithSmartContract();
+      connectingWithSmartContract(addListeners);
     } catch (error) {
       // setError("Error while connecting to wallet");
       // setOpenError(true);
@@ -127,14 +120,57 @@ export const NFTMarketplaceProvider = ({ children }) => {
   };
 
   //---UPLOAD TO IPFS FUNCTION
-  const uploadToIPFS = async (file) => {
+  const uploadToIPFS = async (selectedFile) => {
+    const formData = new FormData();
+
+    formData.append("file", selectedFile);
+
+    const metadata = JSON.stringify({
+      name: "File name",
+    });
+    formData.append("pinataMetadata", metadata);
+
+    const options = JSON.stringify({
+      cidVersion: 0,
+    });
+    formData.append("pinataOptions", options);
+
     try {
-      const added = await client.add({ content: file });
-      const url = `${subdomain}/ipfs/${added.path}`;
-      return url;
+      const res = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        formData,
+        {
+          maxBodyLength: "Infinity",
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+            Authorization: JWT,
+          },
+        }
+      );
+
+      const IpfsHash = res.data.IpfsHash;
+      if (res.status == 200) {
+        var data = JSON.stringify({
+          name: "aaa",
+          decs: "bbb",
+          image: IpfsHash,
+        });
+        var config = {
+          method: "post",
+          url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: JWT,
+          },
+          data: data,
+        };
+        const res = await axios(config);
+      }
+      // console.log(res.data);
     } catch (error) {
-      setError("Error Uploading to IPFS");
-      setOpenError(true);
+      console.log(error);
+      // setError("Error Uploading to IPFS");
+      // setOpenError(true);
     }
   };
 
@@ -147,7 +183,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     try {
       const added = await client.add(data);
-
+      //https://gateway.pinata.cloud/ipfs/QmPeo8peff6AsSJ3GwL1KaieELTbBYW6CGMdqZPgsWsUac
       const url = `https://infura-ipfs.io/ipfs/${added.path}`;
 
       await createSale(url, price);

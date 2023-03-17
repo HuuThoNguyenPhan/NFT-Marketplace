@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from "react";
+import Moralis from "moralis";
+
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 
-//INTRNAL IMPORT
 import Style from "./DropZone.module.css";
 import images from "../../../assets/img";
 
@@ -26,7 +27,6 @@ const DropZone = ({
     const url = await uploadToIPFS(acceptedFile[0]);
     setFileUrl(url);
     setImage(url);
-    console.log(url);
   });
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -34,6 +34,7 @@ const DropZone = ({
     accept: "image/*",
     maxSize: 5000000,
   });
+
   return (
     <div className={Style.DropZone}>
       <div className={Style.DropZone_box} {...getRootProps()}>
