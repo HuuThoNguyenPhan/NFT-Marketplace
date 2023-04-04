@@ -104,7 +104,7 @@ const NFTDescription = ({ nft }) => {
   };
 
   //SMART CONTRACT DATA
-  // const { buyNFT, currentAccount } = useContext(NFTMarketplaceContext);
+  const { buyNFT, currentAccount } = useContext(NFTMarketplaceContext);
 
   return (
     <div className={Style.NFTDescription}>
@@ -164,7 +164,7 @@ const NFTDescription = ({ nft }) => {
         {/* //Part TWO */}
         <div className={Style.NFTDescription_box_profile}>
           <h1>
-            {/* {nft.name} #{nft.tokenId} */}
+            {nft.name} #{nft.tokenId}
           </h1>
           <div className={Style.NFTDescription_box_profile_box}>
             <div className={Style.NFTDescription_box_profile_box_left}>
@@ -251,14 +251,14 @@ const NFTDescription = ({ nft }) => {
               >
                 <small>Current Bid</small>
                 <p>
-                  {/* {nft.price} ETH <span>( ≈ $3,221.22)</span> */}
+                  {nft.price} ETH <span>( ≈ $3,221.22)</span>
                 </p>
               </div>
 
               <span>[96 in stock]</span>
             </div>
 
-            {/* <div className={Style.NFTDescription_box_profile_biding_box_button}>
+            <div className={Style.NFTDescription_box_profile_biding_box_button}>
               {currentAccount == nft.seller.toLowerCase() ? (
                 <p>You can't buy your own NFT</p>
               ) : currentAccount == nft.owner.toLowerCase() ? (
@@ -287,7 +287,7 @@ const NFTDescription = ({ nft }) => {
                 handleClick={() => {}}
                 classStyle={Style.button}
               />
-            </div> */}
+            </div>
 
             <div className={Style.NFTDescription_box_profile_biding_box_tabs}>
               <button onClick={(e) => openTabs(e)}>Bid History</button>

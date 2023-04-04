@@ -19,7 +19,7 @@ const HeroSection = () => {
             your NTFs and sell them
           </p>
           <Button
-            btnName="Tìm kiếm"
+            btnName="Khám phá"
             handleClick={() => router.push("/searchPage")}
           />
         </div>

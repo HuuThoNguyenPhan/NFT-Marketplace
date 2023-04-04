@@ -6,10 +6,9 @@ import axios from "axios";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 
 const JWT =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIxMDQ1MDQyYy03Y2FlLTQzZGMtYTliZS0wMDNmMmVjZDYzNDYiLCJlbWFpbCI6InRob3BybzIwMDFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImE3OWQ2NDVkYjQyN2U4YWI5YTE5Iiwic2NvcGVkS2V5U2VjcmV0IjoiZjE0ODM1N2I5ZDA3MmIxZjMzZjlkM2U2YmFiODg4MWYwZGIxNjBlMjg0ZWQ3MDNhNDFlOTY3YTgzZTQ3N2RlNCIsImlhdCI6MTY3OTA3NDQ2Mn0.uK8viuDe9nYyzR2R_TGZMN98rfd1eZjfmWjMG3tNepI";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIxMDQ1MDQyYy03Y2FlLTQzZGMtYTliZS0wMDNmMmVjZDYzNDYiLCJlbWFpbCI6InRob3BybzIwMDFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImE3OWQ2NDVkYjQyN2U4YWI5YTE5Iiwic2NvcGVkS2V5U2VjcmV0IjoiZjE0ODM1N2I5ZDA3MmIxZjMzZjlkM2U2YmFiODg4MWYwZGIxNjBlMjg0ZWQ3MDNhNDFlOTY3YTgzZTQ3N2RlNCIsImlhdCI6MTY3OTA3NDQ2Mn0.uK8viuDe9nYyzR2R_TGZMN98rfd1eZjfmWjMG3tNepI";
 const subdomain = "your subdomain";
 
-//INTERNAL  IMPORT
 import {
   NFTMarketplaceAddress,
   NFTMarketplaceABI,
@@ -25,23 +24,6 @@ const fetchContract = (signerOrProvider) =>
     signerOrProvider
   );
 
-//---CONNECTING WITH SMART CONTRACT
-
-const connectingWithSmartContract = async (addListeners) => {
-  try {
-    const web3Modal = new Web3Modal();
-    const connection = await web3Modal.connect();
-
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-    addListeners(connection);
-    const contract = fetchContract(signer);
-    return contract;
-  } catch (error) {
-    console.log("Something went wrong while connecting with contract", error);
-  }
-};
-
 export const NFTMarketplaceContext = createContext();
 
 export const NFTMarketplaceProvider = ({ children }) => {
@@ -53,33 +35,39 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [accountBalance, setAccountBalance] = useState("");
   const router = useRouter();
-  const [selectedFile, setSelectedFile] = useState();
 
-  // --- Đổi ví
-  const addListeners = async (web3ModalProvider) => {
-    web3ModalProvider.on("accountsChanged", (accounts) => {
-      setCurrentAccount(accounts);
-    });
+  const connectingWithSmartContract = async () => {
+    try {
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+      return contract;
+    } catch (error) {
+      console.log("Something went wrong while connecting with contract", error);
+    }
   };
 
   //---CHECK IF WALLET IS CONNECTED
-  console.log(currentAccount);
   const checkIfWalletConnected = async () => {
     try {
       if (!window.ethereum)
-        return setOpenError(true), setError("Install MetaMask");
+        return setOpenError(true), setError("Hãy cài đặt ví MetaMask");
 
+      window.ethereum.on("accountsChanged", (account) => {
+        setCurrentAccount(account[0]);
+      });
       const accounts = await window.ethereum.request({
         method: "eth_accounts",
       });
 
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
-        // console.log(accounts[0]);
       } else {
-        // setError("No Account Found");
-        // setOpenError(true);
-        console.log("No account");
+        setError("Không tìm thấy tài khoản");
+        setOpenError(true);
       }
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -87,22 +75,36 @@ export const NFTMarketplaceProvider = ({ children }) => {
       const bal = ethers.utils.formatEther(getBalance);
       setAccountBalance(bal);
     } catch (error) {
-      // setError("Something wrong while connecting to wallet");
-      // setOpenError(true);
+      setError("Lỗi khi kết nối ví");
+      setOpenError(true);
       console.log("not connected");
     }
   };
 
-  // useEffect(() => {
-  //   checkIfWalletConnected();
-  //   connectingWithSmartContract();
-  // }, []);
+  useEffect(() => {
+    // window.addEventListener("beforeunload", (event) => {
+    //   event.preventDefault();
+    //   event.returnValue = "";
+    //   localStorage.clear();
+    //   if (sessionStorage.getItem("myAccount")) {
+    //     localStorage.setItem("myAccount", "exist");
+    //     sessionStorage.setItem("myAccount", "exist");
+    //   }
+    // });
+    console.log(localStorage.getItem("myAccount"));
+    if (
+      sessionStorage.getItem("myAccount")
+    ) {
+      checkIfWalletConnected();
+      connectingWithSmartContract();
+    }
+  }, []);
 
-  //---CONNET WALLET FUNCTION
+  //---Hàm kết nối ví
   const connectWallet = async () => {
     try {
       if (!window.ethereum)
-        return setOpenError(true), setError("Install MetaMask");
+        return setOpenError(true), setError("Hãy cài đặt ví MetaMask");
 
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
@@ -110,23 +112,25 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       console.log(accounts);
       setCurrentAccount(accounts[0]);
+      // localStorage.setItem("myAccount", "exist");
+      sessionStorage.setItem("myAccount", "exist");
 
       // window.location.reload();
-      connectingWithSmartContract(addListeners);
+      connectingWithSmartContract();
     } catch (error) {
-      // setError("Error while connecting to wallet");
-      // setOpenError(true);
+      setError("Lỗi khi kết nối ví");
+      setOpenError(true);
     }
   };
 
   //---UPLOAD TO IPFS FUNCTION
-  const uploadToIPFS = async (selectedFile) => {
+  const uploadToIPFS = async (selectedFile, name, description) => {
     const formData = new FormData();
 
     formData.append("file", selectedFile);
 
     const metadata = JSON.stringify({
-      name: "File name",
+      name: "File",
     });
     formData.append("pinataMetadata", metadata);
 
@@ -143,53 +147,61 @@ export const NFTMarketplaceProvider = ({ children }) => {
           maxBodyLength: "Infinity",
           headers: {
             "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
-            Authorization: JWT,
+            Authorization: "Bearer " + JWT,
           },
         }
       );
 
-      const IpfsHash = res.data.IpfsHash;
-      if (res.status == 200) {
-        var data = JSON.stringify({
-          name: "aaa",
-          decs: "bbb",
-          image: IpfsHash,
-        });
-        var config = {
-          method: "post",
-          url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: JWT,
+      const IpfsHash = "ipfs://" + res.data.IpfsHash;
+
+      var data = JSON.stringify({
+        pinataOptions: {
+          cidVersion: 0,
+        },
+        pinataMetadata: {
+          name: "Metadata",
+          keyvalues: {
+            name: name,
+            descreption: description,
+            image: IpfsHash,
           },
-          data: data,
-        };
-        const res = await axios(config);
-      }
-      // console.log(res.data);
+        },
+        pinataContent: {
+          somekey: new Date().getTime(),
+        },
+      });
+
+      console.log(data);
+      var config = {
+        method: "post",
+        url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + JWT,
+        },
+        data: data,
+      };
+      const resMetadata = await axios(config);
+      return "https://gateway.pinata.cloud/ipfs/" + resMetadata.data.IpfsHash;
     } catch (error) {
       console.log(error);
-      // setError("Error Uploading to IPFS");
-      // setOpenError(true);
+      setError("Lỗi khi tải tệp lên ");
+      setOpenError(true);
     }
   };
 
   //---CREATENFT FUNCTION
   const createNFT = async (name, price, image, description, router) => {
     if (!name || !description || !price || !image)
-      return setError("Data Is Missing"), setOpenError(true);
-
-    const data = JSON.stringify({ name, description, image });
+      return setError("Thiếu dữ liệu"), setOpenError(true);
 
     try {
-      const added = await client.add(data);
-      //https://gateway.pinata.cloud/ipfs/QmPeo8peff6AsSJ3GwL1KaieELTbBYW6CGMdqZPgsWsUac
-      const url = `https://infura-ipfs.io/ipfs/${added.path}`;
+      const url = await uploadToIPFS(image, name, description);
 
       await createSale(url, price);
       router.push("/searchPage");
     } catch (error) {
-      setError("Error while creating NFT");
+      setError("Lỗi khi tạo sản phẩm NFT");
       setOpenError(true);
     }
   };
@@ -203,7 +215,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
       const contract = await connectingWithSmartContract();
 
       const listingPrice = await contract.getListingPrice();
-
+      console.error(listingPrice);
       const transaction = !isReselling
         ? await contract.createToken(url, price, {
             value: listingPrice.toString(),
@@ -236,7 +248,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
       const provider = new ethers.providers.JsonRpcProvider();
 
-      console.log(provider);
       const contract = fetchContract(provider);
       // const contract = fetchContract(provider);
 
@@ -246,15 +257,30 @@ export const NFTMarketplaceProvider = ({ children }) => {
         data.map(
           async ({ tokenId, seller, owner, price: unformattedPrice }) => {
             const tokenURI = await contract.tokenURI(tokenId);
+            var config = {
+              method: "get",
+              url:
+                "https://api.pinata.cloud/data/pinList?hashContains=" +
+                tokenURI.slice(34, tokenURI.length),
+              headers: {
+                Authorization: "Bearer " + JWT,
+                "Access-Control-Allow-Origin": "*",
+              },
+            };
 
-            const {
-              data: { image, name, description },
-            } = await axios.get(tokenURI, {});
+            console.log(tokenURI);
+            const res = await axios(config);
             const price = ethers.utils.formatUnits(
               unformattedPrice.toString(),
               "ether"
             );
-
+            const metaData = res.data.rows[0].metadata.keyvalues;
+            const name = metaData.name;
+            const description = metaData.descreption;
+            // const image = "https://ipfs.io/ipfs/" + metaData.image.slice(7,metaData.image.length);
+            const image =
+              "https://gateway.pinata.cloud/ipfs/" +
+              metaData.image.slice(7, metaData.image.length);
             return {
               price,
               tokenId: tokenId.toNumber(),
@@ -268,14 +294,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
           }
         )
       );
-      console.log(items);
+
       return items;
 
       // }
     } catch (error) {
-      // setError("Error while fetching NFTS");
-      // setOpenError(true);
-      console.log(error);
+      setError("Error while fetching NFTS");
+      setOpenError(true);
     }
   };
 
@@ -300,9 +325,26 @@ export const NFTMarketplaceProvider = ({ children }) => {
           data.map(
             async ({ tokenId, seller, owner, price: unformattedPrice }) => {
               const tokenURI = await contract.tokenURI(tokenId);
-              const {
-                data: { image, name, description },
-              } = await axios.get(tokenURI);
+              var config = {
+                method: "get",
+                url:
+                  "https://api.pinata.cloud/data/pinList?hashContains=" +
+                  tokenURI.slice(34, tokenURI.length),
+                headers: {
+                  Authorization: "Bearer " + JWT,
+                  "Access-Control-Allow-Origin": "*",
+                },
+              };
+
+              const res = await axios(config);
+
+              const metaData = res.data.rows[0].metadata.keyvalues;
+              const name = metaData.name;
+              const description = metaData.descreption;
+              // const image = "https://ipfs.io/ipfs/" + metaData.image.slice(7,metaData.image.length);
+              const image =
+                "https://gateway.pinata.cloud/ipfs/" +
+                metaData.image.slice(7, metaData.image.length);
               const price = ethers.utils.formatUnits(
                 unformattedPrice.toString(),
                 "ether"
@@ -321,11 +363,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
             }
           )
         );
+        console.log(items.length);
         return items;
       }
     } catch (error) {
-      // setError("Error while fetching listed NFTs");
-      // setOpenError(true);
+      setError("Error while fetching listed NFTs");
+      setOpenError(true);
     }
   };
 
@@ -346,7 +389,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
       await transaction.wait();
       router.push("/author");
     } catch (error) {
-      setError("Error While buying NFT");
+      setError("Lỗi khi mua sản phẩm NFT");
       setOpenError(true);
     }
   };
@@ -364,7 +407,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const connectToTransferFunds = async () => {
     try {
-      const web3Modal = new Wenb3Modal();
+      const web3Modal = new Web3Modal();
       const connection = await web3Modal.connect();
       const provider = new ethers.providers.Web3Provider(connection);
       const signer = provider.getSigner();

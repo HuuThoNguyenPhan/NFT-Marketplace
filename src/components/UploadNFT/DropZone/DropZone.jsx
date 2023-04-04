@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from "react";
-import Moralis from "moralis";
 
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
@@ -18,15 +17,13 @@ const DropZone = ({
   fileSize,
   category,
   properties,
-  uploadToIPFS,
   setImage,
 }) => {
   const [fileUrl, setFileUrl] = useState(null);
 
   const onDrop = useCallback(async (acceptedFile) => {
-    const url = await uploadToIPFS(acceptedFile[0]);
-    setFileUrl(url);
-    setImage(url);
+    setFileUrl(acceptedFile[0]);
+    setImage(acceptedFile[0]);
   });
 
   const { getRootProps, getInputProps } = useDropzone({

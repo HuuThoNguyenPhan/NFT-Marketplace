@@ -4,16 +4,18 @@ require("@nomicfoundation/hardhat-toolbox");
 module.exports = {
   solidity: "0.8.17",
   networks: {
-    //   hardhat: {},
-
-    polygon_mumbai: {
-      // chainId: 80001,
-      url: "Your URL",
-      // url: process.env.POLYGON_MUMBAI,
-      accounts: [
-        `0x${"Your Account"}`,
-      ],
+    hardhat: {
+      chainId: 1337,
     },
+
+    // polygon_mumbai: {
+    //   // chainId: 80001,
+    //   url: "Your URL",
+    //   // url: process.env.POLYGON_MUMBAI,
+    //   accounts: [
+    //     `0x${"Your Account"}`,
+    //   ],
+    // },
 
     // fuji: {
     //   url: `Your URL`,

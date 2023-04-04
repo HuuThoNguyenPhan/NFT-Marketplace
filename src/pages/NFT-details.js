@@ -17,14 +17,14 @@ const NFTDetails = () => {
   });
 
   const router = useRouter();
-  // useEffect(() => {
-  //   if (!router.isReady) return;
-  //   setNft(router.query);
-  // }, [router.isReady]);
+  useEffect(() => {
+    if (!router.isReady) return;
+    setNft(router.query);
+  }, [router.isReady]);
 
   return (
     <div>
-      <NFTDetailsPage />
+      <NFTDetailsPage nft={nft} />
       <Category />
     </div>
   );

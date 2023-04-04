@@ -5,7 +5,7 @@ const nextConfig = {
   swcMinify: true,
 
   images: {
-    domains: ["infura-ipfs.io", "daulat-nft-marketplace.infura-ipfs.io"],
+    domains: ["gateway.pinata.cloud"],
   },
 };
 

@@ -4,7 +4,7 @@ import { DiJqueryLogo } from "react-icons/di";
 
 import { MdNotifications } from "react-icons/md";
 import { BsSearch } from "react-icons/bs";
-import { CgMenuLeft, CgMenuRight } from "react-icons/cg";
+import { CgMenuRight } from "react-icons/cg";
 
 import { useRouter } from "next/router";
 
@@ -12,6 +12,7 @@ import Style from "./NavBar.module.css";
 import { Discover, HelpCenter, Notification, Profile, SideBar } from "./index";
 import { Button, Error } from "../componentsindex";
 import images from "../../assets/img";
+import jazzicon from "@metamask/jazzicon";
 
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
@@ -23,6 +24,8 @@ const NavBar = () => {
   const [openSideMenu, setOpenSideMenu] = useState(false);
 
   const router = useRouter();
+
+  const avatarRef = useRef();
 
   const openMenu = (e) => {
     const btnText = e.target.innerText;
@@ -56,6 +59,7 @@ const NavBar = () => {
   };
 
   const openProfile = () => {
+    console.log(profile)
     if (!profile) {
       setProfile(true);
       setHelp(false);
@@ -74,7 +78,22 @@ const NavBar = () => {
     }
   };
 
-  const { currentAccount, connectWallet } = useContext(NFTMarketplaceContext);
+  const { currentAccount, connectWallet, openError } = useContext(
+    NFTMarketplaceContext
+  );
+
+  useEffect(() => {
+    const element = avatarRef.current;
+    if (element && currentAccount) {
+      const addr = currentAccount.slice(2, 10);
+      const seed = parseInt(addr, 16);
+      const icon = jazzicon(45, seed); //generates a size 20 icon
+      if (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
+      element.appendChild(icon);
+    }
+  }, [currentAccount, avatarRef]);
 
   return (
     <div className={Style.navbar}>
@@ -123,7 +142,6 @@ const NavBar = () => {
           </div>
 
           {/* Nút Tạo */}
-                {currentAccount}
           <div className={Style.navbar_container_right_button}>
             {currentAccount == "" ? (
               <Button
@@ -143,21 +161,23 @@ const NavBar = () => {
 
           <div className={Style.navbar_container_right_profile_box}>
             <div className={Style.navbar_container_right_profile}>
-              <Image
-                src={images.user1}
-                alt="Profile"
-                width={40}
-                height={40}
-                onClick={() => openProfile()}
-                className={Style.navbar_container_right_profile}
-              />
+              {currentAccount == "" ? (
+                <Image
+                  src={images.avatar}
+                  alt="Profile"
+                  width={40}
+                  height={40}
+                  className={Style.navbar_container_right_profile}
+                />
+              ) : (
+                <div ref={avatarRef} onClick={() => openProfile()}></div>
+              )}
 
-              {profile && <Profile />}
+              {profile && <Profile currentAccount={currentAccount} />}
             </div>
           </div>
 
           {/* Nút menu */}
-
           <div className={Style.navbar_container_right_menuBtn}>
             <CgMenuRight
               className={Style.menuIcon}
@@ -178,7 +198,7 @@ const NavBar = () => {
         </div>
       )}
 
-      {/* {openError && <Error />} */}
+      {openError && <Error />}
     </div>
   );
 };

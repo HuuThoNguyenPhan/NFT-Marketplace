@@ -55,30 +55,31 @@ const author = () => {
   const [following, setFollowing] = useState(false);
 
   
-  // const { fetchMyNFTsOrListedNFTs, currentAccount } = useContext(
-  //   NFTMarketplaceContext
-  // );
+  const { fetchMyNFTsOrListedNFTs, currentAccount } = useContext(
+    NFTMarketplaceContext
+  );
 
   const [nfts, setNfts] = useState([]);
   const [myNFTs, setMyNFTs] = useState([]);
 
-  // useEffect(() => {
-  //   fetchMyNFTsOrListedNFTs("fetchItemsListed").then((items) => {
-  //     setNfts(items);
-  //   });
-  // }, []);
+  useEffect(() => {
+    fetchMyNFTsOrListedNFTs("fetchItemsListed").then((items) => {
+      setNfts(items);
+    });
+  }, []);
 
-  // useEffect(() => {
-  //   fetchMyNFTsOrListedNFTs("fetchMyNFTs").then((items) => {
-  //     setMyNFTs(items);
-  //   });
-  // }, []);
+  useEffect(() => {
+    fetchMyNFTsOrListedNFTs("fetchMyNFTs").then((items) => {
+      console.log(items)
+      setMyNFTs(items);
+
+    });
+  }, []);
 
   return (
     <div className={Style.author}>
       <Banner bannerImage={images.creatorbackground2} />
-      <AuthorProfileCard />
-      {/* <AuthorProfileCard currentAccount={currentAccount} /> */}
+      <AuthorProfileCard currentAccount={currentAccount} />
       <AuthorTaps
         setCollectiables={setCollectiables}
         setCreated={setCreated}

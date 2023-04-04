@@ -16,7 +16,7 @@ import {
 import { getTopCreators } from "../utils/TopCreators/TopCreators";
 
 const Home = () => {
-
+ 
   const [nfts, setNfts] = useState([]);
   const [nftsCopy, setNftsCopy] = useState([]);
 
@@ -44,7 +44,7 @@ const Home = () => {
       ) : (
         <FollowerTab TopCreator={creators} />
       )} */}
-      
+
       <Title
         heading="Thể loại"
         paragraph="Xem các sản phẩm NFT theo thể loại."
@@ -59,8 +59,6 @@ const Home = () => {
       <Filter />
       {nfts.length == 0 ? <Loader /> : <NFTCard NFTData={nfts} />}
       <NFTCard />
-
-      
     </div>
   );
 };

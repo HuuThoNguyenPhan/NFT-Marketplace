@@ -30,7 +30,6 @@ const NFTCard = ({ NFTData }) => {
     }
   };
 
-  // console.log(NFTData);
   return (
     <div className={Style.NFTCard}>
       {CardArray.map((el, i) => (

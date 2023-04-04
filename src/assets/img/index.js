@@ -57,8 +57,9 @@ import loader from "./loadergif.gif";
 import errorgif from "./error.gif";
 import transfer from "./transfer.gif";
 import transferEther from "./ethereTransfer.gif";
-
+import avatar from "./avatar.png";
 export default {
+  avatar,
   hero2,
   founder1,
   founder2,

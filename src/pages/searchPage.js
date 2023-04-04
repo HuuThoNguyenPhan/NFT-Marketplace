@@ -10,23 +10,31 @@ import { NFTCardTwo, Banner } from "../components/collectionPage/collectionIndex
 import images from "../assets/img";
 
 
+import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
+
+
 const searchPage = () => {
+
+  const { fetchNFTs, setError, currentAccount } = useContext(
+    NFTMarketplaceContext
+  );
+
   const [nfts, setNfts] = useState([]);
   const [nftsCopy, setNftsCopy] = useState([]);
 
-  // useEffect(() => {
-  //   try {
-  //     // if (currentAccount) {
-  //     fetchNFTs().then((items) => {
-  //       setNfts(items.reverse());
-  //       setNftsCopy(items);
-  //       console.log(nfts);
-  //     });
-  //     // }
-  //   } catch (error) {
-  //     setError("Please reload the browser", error);
-  //   }
-  // }, []);
+  useEffect(() => {
+    try {
+      // if (currentAccount) {
+      fetchNFTs().then((items) => {
+        setNfts(items.reverse());
+        setNftsCopy(items);
+        console.log(nfts);
+      });
+      // }
+    } catch (error) {
+      setError("Please reload the browser", error);
+    }
+  }, []);
 
   const onHandleSearch = (value) => {
     const filteredNFTS = nfts.filter(({ name }) =>

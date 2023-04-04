@@ -67,7 +67,6 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
         category={category}
         properties={properties}
         setImage={setImage}
-        uploadToIPFS={uploadToIPFS}
       />
 
       <div className={Style.upload_box}>

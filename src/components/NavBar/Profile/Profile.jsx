@@ -1,30 +1,33 @@
-import React from "react";
-import Image from "next/image";
-import { FaUserAlt, FaRegImage, FaUserEdit } from "react-icons/fa";
-import { MdHelpCenter } from "react-icons/md";
-import { TbDownloadOff, TbDownload } from "react-icons/tb";
+import React, { useEffect, useRef } from "react";
+import { FaUserAlt, FaRegImage } from "react-icons/fa";
 import Link from "next/link";
 
-//INTERNAL IMPORT
 import Style from "./Profile.module.css";
-import images from "../../../assets/img";
+import jazzicon from "@metamask/jazzicon";
 
 const Profile = ({ currentAccount }) => {
+  const avatarRef = useRef();
+  useEffect(() => {
+    const element = avatarRef.current;
+    if (element && currentAccount) {
+      const addr = currentAccount.slice(2, 10);
+      const seed = parseInt(addr, 16);
+      const icon = jazzicon(45, seed); //generates a size 20 icon
+      if (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
+      element.appendChild(icon);
+    }
+   
+  }, [currentAccount, avatarRef]);
   return (
     <div className={Style.profile}>
       <div className={Style.profile_account}>
-        <Image
-          src={images.user1}
-          alt="user profile"
-          width={50}
-          height={50}
-          className={Style.profile_account_img}
-        />
+        <div ref={avatarRef}></div>
 
         <div className={Style.profile_account_info}>
           <p>Shoaib Bhai</p>
-          {/* <small>{currentAccount.slice(0, 18)}..</small> */}
-          <small>ádsaddddddddddd</small>
+          <small>{currentAccount.slice(0, 18)}..</small>
         </div>
       </div>
 
@@ -40,27 +43,6 @@ const Profile = ({ currentAccount }) => {
             <FaRegImage />
             <p>
               <Link href={{ pathname: "/author" }}>My Items</Link>
-            </p>
-          </div>
-          <div className={Style.profile_menu_one_item}>
-            <FaUserEdit />
-            <p>
-              <Link href={{ pathname: "/account" }}>Edit Profile</Link>
-            </p>
-          </div>
-        </div>
-
-        <div className={Style.profile_menu_two}>
-          <div className={Style.profile_menu_one_item}>
-            <MdHelpCenter />
-            <p>
-              <Link href={{ pathname: "/contactus" }}>Help</Link>
-            </p>
-          </div>
-          <div className={Style.profile_menu_one_item}>
-            <TbDownload />
-            <p>
-              <Link href={{ pathname: "/aboutus" }}>About Us</Link>
             </p>
           </div>
         </div>
