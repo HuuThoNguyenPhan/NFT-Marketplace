@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaFilter,
   FaAngleDown,
@@ -13,16 +13,15 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import { MdVerified } from "react-icons/md";
 import { TiTick } from "react-icons/ti";
 
-//INTERNAL IMPORT
 import Style from "./Filter.module.css";
 
-const Filter = () => {
+const Filter = (props) => {
   const [filter, setFilter] = useState(true);
   const [image, setImage] = useState(true);
   const [video, setVideo] = useState(true);
+  const [application, setApplication] = useState(true);
   const [music, setMusic] = useState(true);
 
-  //FUNCTION SECTION
   const openFilter = () => {
     if (!filter) {
       setFilter(true);
@@ -32,27 +31,31 @@ const Filter = () => {
   };
 
   const openImage = () => {
-    if (!image) {
-      setImage(true);
-    } else {
-      setImage(false);
-    }
+    setImage((prevData) => {
+      props.onHandleFilter(video, !prevData, music, application);
+      return !prevData;
+    });
   };
 
   const openVideo = () => {
-    if (!video) {
-      setVideo(true);
-    } else {
-      setVideo(false);
-    }
+    setVideo((prevData) => {
+      props.onHandleFilter(!prevData, image, music, application);
+      return !prevData;
+    });
   };
 
   const openMusic = () => {
-    if (!music) {
-      setMusic(true);
-    } else {
-      setMusic(false);
-    }
+    setMusic((prevData) => {
+      props.onHandleFilter(video, image, !prevData, application);
+      return !prevData;
+    });
+  };
+
+  const openApplication = () => {
+    setApplication((prevData) => {
+      props.onHandleFilter(video, image, music, !prevData);
+      return !prevData;
+    });
   };
 
   return (
@@ -89,7 +92,17 @@ const Filter = () => {
           <div className={Style.filter_box_items_box}>
             <div
               className={Style.filter_box_items_box_item_trans}
-              onClick={() => openImage()}
+              onClick={openApplication}
+            >
+              <FaImages /> <small>Tệp</small>
+              {application ? <AiFillCloseCircle /> : <TiTick />}
+            </div>
+          </div>
+
+          <div className={Style.filter_box_items_box}>
+            <div
+              className={Style.filter_box_items_box_item_trans}
+              onClick={openImage}
             >
               <FaImages /> <small>Images</small>
               {image ? <AiFillCloseCircle /> : <TiTick />}
@@ -99,7 +112,7 @@ const Filter = () => {
           <div className={Style.filter_box_items_box}>
             <div
               className={Style.filter_box_items_box_item_trans}
-              onClick={() => openVideo()}
+              onClick={openVideo}
             >
               <FaVideo /> <small>Videos</small>
               {video ? <AiFillCloseCircle /> : <TiTick />}
@@ -109,7 +122,7 @@ const Filter = () => {
           <div className={Style.filter_box_items_box}>
             <div
               className={Style.filter_box_items_box_item_trans}
-              onClick={() => openMusic()}
+              onClick={openMusic}
             >
               <FaMusic /> <small>Musics</small>
               {music ? <AiFillCloseCircle /> : <TiTick />}

@@ -2,19 +2,19 @@ import React, { useEffect, useState, useContext } from "react";
 
 //INTRNAL IMPORT
 import Style from "../styles/searchPage.module.css";
-import { Slider, Loader } from "../components/componentsindex";
+import { Slider, Loader, AudioLive } from "../components/componentsindex";
 import { SearchBar } from "../components/SearchPage/searchBarIndex";
 import { Filter } from "../components/componentsindex";
 
-import { NFTCardTwo, Banner } from "../components/collectionPage/collectionIndex";
+import {
+  NFTCardTwo,
+  Banner,
+} from "../components/collectionPage/collectionIndex";
 import images from "../assets/img";
-
 
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
-
 const searchPage = () => {
-
   const { fetchNFTs, setError, currentAccount } = useContext(
     NFTMarketplaceContext
   );
@@ -24,15 +24,28 @@ const searchPage = () => {
 
   useEffect(() => {
     try {
-      // if (currentAccount) {
       fetchNFTs().then((items) => {
-        setNfts(items.reverse());
-        setNftsCopy(items);
-        console.log(nfts);
+        const finalItems = [];
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].breed != undefined) {
+            items[i].count = 1;
+            items[i].tokenIds = [];
+            for (let j = i + 1; j < items.length; j++) {
+              if (items[j].breed == items[i].breed) {
+                items[i].count++;
+                items[i].tokenIds.push(items[j].tokenId)
+                items.splice(j, 1);
+              }
+            }
+          }
+          finalItems.push(items[i]);
+        }
+        console.log(finalItems);
+        setNfts(finalItems.reverse());
+        setNftsCopy(finalItems);
       });
-      // }
     } catch (error) {
-      setError("Please reload the browser", error);
+      setError("Hãy tải lại trình duyệt", error);
     }
   }, []);
 
@@ -54,6 +67,33 @@ const searchPage = () => {
     }
   };
 
+  function onHandleFilter(video, image, music, file) {
+    if (video && image && music && file) {
+      setNfts(nftsCopy);
+      return;
+    }
+    const filteredNFTS = [];
+    if (!file)
+      filteredNFTS = filteredNFTS.concat(
+        nftsCopy.filter((e) => e.typeFile == "application")
+      );
+    if (!video)
+      filteredNFTS = filteredNFTS.concat(
+        nftsCopy.filter((e) => e.typeFile == "video")
+      );
+    if (!music)
+      filteredNFTS = filteredNFTS.concat(
+        nftsCopy.filter((e) => e.typeFile == "audio")
+      );
+    if (!image)
+      filteredNFTS = filteredNFTS.concat(
+        nftsCopy.filter((e) => e.typeFile == "image")
+      );
+
+    console.log(filteredNFTS + "aaaaaaaaa");
+    setNfts(filteredNFTS);
+  }
+
   // const collectionArray = [
   //   images.nft_image_1,
   //   images.nft_image_2,
@@ -71,9 +111,11 @@ const searchPage = () => {
         onHandleSearch={onHandleSearch}
         onClearSearch={onClearSearch}
       />
-      <Filter />
+
+      <Filter onHandleFilter={onHandleFilter} />
       {nfts.length == 0 ? <Loader /> : <NFTCardTwo NFTData={nfts} />}
       <Slider />
+      <AudioLive />
     </div>
   );
 };

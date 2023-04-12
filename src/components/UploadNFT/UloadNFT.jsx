@@ -23,6 +23,7 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
   const [category, setCategory] = useState(0);
   const [properties, setProperties] = useState("");
   const [image, setImage] = useState(null);
+  const [quantity, setQuantity] = useState(1);
 
   const router = useRouter();
 
@@ -53,25 +54,37 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
     },
   ];
 
+  const handleNumber = (e, setState) => {
+    setState(() => {
+      e.target.value = e.target.value.replace(" ", "");
+      return Number.isInteger(Number(e.target.value)) &&
+        Number(e.target.value) >= 0
+        ? e.target.value.replace(".", "")
+        : 1;
+    });
+  };
+
   return (
     <div className={Style.upload}>
       <DropZone
-        title="JPG, PNG, WEBM , MAX 100MB"
-        heading="Drag & drop file"
-        subHeading="or Browse media on your device"
+        title="JPG, PNG, WEBM , MAX 25MB"
+        heading="Kéo và thả tệp"
+        subHeading="hoặc tải tệp lên từ thiết bị của bạn"
         name={name}
         website={website}
         description={description}
         royalties={royalties}
-        fileSize={fileSize}
+        setFileSize={setFileSize}
         category={category}
         properties={properties}
         setImage={setImage}
+        fileSize={fileSize}
+        image={image}
       />
 
       <div className={Style.upload_box}>
         <div className={formStyle.Form_box_input}>
-          <label htmlFor="nft">Item Name</label>
+          <label htmlFor="nft">Tên sản phẩm</label>
           <input
             type="text"
             placeholder="shoaib bhai"
@@ -102,18 +115,18 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
         </div>
 
         <div className={formStyle.Form_box_input}>
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description">Mô tả</label>
           <textarea
             name=""
             id=""
             cols="30"
             rows="6"
-            placeholder="something about yourself in few words"
+            placeholder="Hãy miêu tả sản phẩm một ít ..."
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
           <p>
-            The description will be included on the item's detail page
-            underneath its image. Markdown syntax is supported.
+            Mô tả sẽ được đưa vào trang chi tiết của sản phẩm, bên dưới hình ảnh
+            của sản phẩm đó.
           </p>
         </div>
 
@@ -167,20 +180,21 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
             </div>
           </div>
           <div className={formStyle.Form_box_input}>
-            <label htmlFor="size">Size</label>
+            <label htmlFor="size">Kích thước</label>
             <div className={formStyle.Form_box_input_box}>
               <div className={formStyle.Form_box_input_box_icon}>
                 <MdOutlineAttachFile />
               </div>
               <input
                 type="text"
-                placeholder="165MB"
+                placeholder={fileSize + " MB"}
                 onChange={(e) => setFileSize(e.target.value)}
+                readOnly
               />
             </div>
           </div>
           <div className={formStyle.Form_box_input}>
-            <label htmlFor="Propertie">Propertie</label>
+            <label htmlFor="Propertie">Thuộc tính</label>
             <div className={formStyle.Form_box_input_box}>
               <div className={formStyle.Form_box_input_box_icon}>
                 <AiTwotonePropertySafety />
@@ -194,7 +208,7 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
           </div>
 
           <div className={formStyle.Form_box_input}>
-            <label htmlFor="Price">Price</label>
+            <label htmlFor="Price">Giá</label>
             <div className={formStyle.Form_box_input_box}>
               <div className={formStyle.Form_box_input_box_icon}>
                 <AiTwotonePropertySafety />
@@ -202,7 +216,23 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
               <input
                 type="text"
                 placeholder="Price"
-                onChange={(e) => setPrice(e.target.value)}
+                value={price}
+                onChange={(e) => handleNumber(e, setPrice)}
+              />
+            </div>
+          </div>
+
+          <div className={formStyle.Form_box_input}>
+            <label htmlFor="Quantity">Số lượng</label>
+            <div className={formStyle.Form_box_input_box}>
+              <div className={formStyle.Form_box_input_box_icon}>
+                <AiTwotonePropertySafety />
+              </div>
+              <input
+                type="text"
+                value={quantity}
+                min={1}
+                onChange={(e) => handleNumber(e, setQuantity)}
               />
             </div>
           </div>
@@ -217,7 +247,8 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
                 price,
                 image,
                 description,
-                router
+                router,
+                quantity
                 // website,
                 // royalties,
                 // fileSize,

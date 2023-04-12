@@ -25,6 +25,10 @@ const HelpCenter = () => {
       name: "Subscription",
       link: "subscription",
     },
+    {
+      name: "Chuyển tiền",
+      link: "transferFunds"
+    }
   ];
   return (
     <div className={Style.box}>

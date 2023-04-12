@@ -73,14 +73,13 @@ const AudioCard = () => {
           <div className={Style.audioCard_box_details_info}>
             <h4>NFT music #1123</h4>
             <div className={Style.audioCard_box_details_info_price}>
-              <small>Price</small>
+              <small>Giá</small>
               <p>$3,221.33</p>
             </div>
           </div>
 
           <div className={Style.audioCard_box_details_stock}>
             <LikeProfile />
-            <small>24 in stock</small>
           </div>
         </div>
 
@@ -88,8 +87,8 @@ const AudioCard = () => {
           <Image
             src={images.creatorbackground10}
             alt="background"
-            width={500}
-            height={500}
+            width={350}
+            height={350}
           />
         </div>
       </div>

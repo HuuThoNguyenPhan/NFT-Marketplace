@@ -46,11 +46,9 @@ contract NFTMarketplace is ERC721URIStorage {
     }
 
     /* Updates the listing price of the contract */
-    function updateListingPrice(uint256 _listingPrice)
-        public
-        payable
-        onlyOwner
-    {
+    function updateListingPrice(
+        uint256 _listingPrice
+    ) public payable onlyOwner {
         require(
             owner == msg.sender,
             "Only marketplace owner can update listing price."
@@ -62,22 +60,24 @@ contract NFTMarketplace is ERC721URIStorage {
     function getListingPrice() public view returns (uint256) {
         return listingPrice;
     }
+
     function getTokenId() public view returns (uint256) {
         return _tokenIds.current();
     }
-    /* Mints a token and lists it in the marketplace */
-    function createToken(string memory tokenURI, uint256 price)
-        public
-        payable
-        returns (uint256)
-    {
-        _tokenIds.increment();
-        uint256 newTokenId = _tokenIds.current();
 
-        _mint(msg.sender, newTokenId);
-        _setTokenURI(newTokenId, tokenURI);
-        createMarketItem(newTokenId, price);
-        return newTokenId;
+    /* Mints a token and lists it in the marketplace */
+    function createToken(
+        string[] memory tokenURI,
+        uint256 price
+    ) public payable {
+        for (uint256 i = 0; i < tokenURI.length; i++) {
+            _tokenIds.increment();
+            uint256 newTokenId = _tokenIds.current();
+
+            _mint(msg.sender, newTokenId);
+            _setTokenURI(newTokenId, tokenURI[i]);
+            createMarketItem(newTokenId, price);
+        }
     }
 
     function createMarketItem(uint256 tokenId, uint256 price) private {
@@ -132,7 +132,7 @@ contract NFTMarketplace is ERC721URIStorage {
             msg.value == price,
             "Please submit the asking price in order to complete the purchase"
         );
-        idToMarketItem[tokenId].owner = payable(msg.sender); 
+        idToMarketItem[tokenId].owner = payable(msg.sender);
         idToMarketItem[tokenId].sold = true;
         idToMarketItem[tokenId].seller = payable(address(0));
         _itemsSold.increment();
@@ -206,5 +206,4 @@ contract NFTMarketplace is ERC721URIStorage {
         }
         return items;
     }
-
 }

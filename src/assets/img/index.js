@@ -58,7 +58,9 @@ import errorgif from "./error.gif";
 import transfer from "./transfer.gif";
 import transferEther from "./ethereTransfer.gif";
 import avatar from "./avatar.png";
+import file from "./file.png";
 export default {
+  file,
   avatar,
   hero2,
   founder1,

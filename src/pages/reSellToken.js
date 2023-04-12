@@ -15,6 +15,7 @@ const reSellToken = () => {
   const { createSale } = useContext(NFTMarketplaceContext);
   const [image, setImage] = useState("");
   const [price, setPrice] = useState('"');
+  const [quantity, setQuantity] = useState(1);
   const router = useRouter();
   const { id, tokenURI } = router.query;
 
@@ -32,7 +33,7 @@ const reSellToken = () => {
 
   const resell = async () => {
     try {
-      await createSale(tokenURI, price, true, id);
+      await createSale(tokenURI, price, quantity, true, id);
       router.push("/author");
     } catch (error) {
       console.log("Error while resell", error);

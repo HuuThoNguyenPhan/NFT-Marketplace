@@ -10,7 +10,7 @@ import {
   MdOutlineDeleteSweep,
 } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
-import { FaWallet, FaPercentage } from "react-icons/fa";
+import { FaWallet } from "react-icons/fa";
 import {
   TiSocialFacebook,
   TiSocialLinkedin,
@@ -35,6 +35,7 @@ const NFTDescription = ({ nft }) => {
   const [history, setHistory] = useState(true);
   const [provanance, setProvanance] = useState(false);
   const [owner, setOwner] = useState(false);
+  const [ownerArray, setOwnerArray] = useState([])
 
   const router = useRouter();
 
@@ -52,13 +53,7 @@ const NFTDescription = ({ nft }) => {
     images.user9,
     images.user10,
   ];
-  const ownerArray = [
-    images.user1,
-    images.user8,
-    images.user2,
-    images.user6,
-    images.user5,
-  ];
+
 
   const openSocial = () => {
     if (!social) {
@@ -97,19 +92,26 @@ const NFTDescription = ({ nft }) => {
       setOwner(true);
       setHistory(false);
       setProvanance(false);
+      fetchOwners()
     } else {
       setOwner(false);
       setHistory(true);
     }
   };
 
+  const fetchOwners = async () => {
+    fecthOwner([1,2]).then((owners)=>{
+      setOwnerArray(owners)
+    })
+  }
   //SMART CONTRACT DATA
-  const { buyNFT, currentAccount } = useContext(NFTMarketplaceContext);
+  const { buyNFT, currentAccount, fecthOwner, changeCurrency } = useContext(
+    NFTMarketplaceContext
+  );
 
   return (
     <div className={Style.NFTDescription}>
       <div className={Style.NFTDescription_box}>
-        {/* //Part ONE */}
         <div className={Style.NFTDescription_box_share}>
           <p>Virtual Worlds</p>
           <div className={Style.NFTDescription_box_share_box}>
@@ -121,7 +123,7 @@ const NFTDescription = ({ nft }) => {
             {social && (
               <div className={Style.NFTDescription_box_share_box_social}>
                 <a href="#">
-                  <TiSocialFacebook /> Facebooke
+                  <TiSocialFacebook /> Facebook
                 </a>
                 <a href="#">
                   <TiSocialInstagram /> Instragram
@@ -161,11 +163,9 @@ const NFTDescription = ({ nft }) => {
             )}
           </div>
         </div>
-        {/* //Part TWO */}
+
         <div className={Style.NFTDescription_box_profile}>
-          <h1>
-            {nft.name} #{nft.tokenId}
-          </h1>
+          <h1>{nft.name}</h1>
           <div className={Style.NFTDescription_box_profile_box}>
             <div className={Style.NFTDescription_box_profile_box_left}>
               <Image
@@ -255,12 +255,12 @@ const NFTDescription = ({ nft }) => {
                 </p>
               </div>
 
-              <span>[96 in stock]</span>
+              <span>[{nft.count} trong kho]</span>
             </div>
 
             <div className={Style.NFTDescription_box_profile_biding_box_button}>
               {currentAccount == nft.seller.toLowerCase() ? (
-                <p>You can't buy your own NFT</p>
+                <p>Bạn không thể mua sản phẩm NFT của chính mình</p>
               ) : currentAccount == nft.owner.toLowerCase() ? (
                 <Button
                   icon=<FaWallet />
@@ -281,12 +281,12 @@ const NFTDescription = ({ nft }) => {
                 />
               )}
 
-              <Button
+              {/* <Button
                 icon=<FaPercentage />
                 btnName="Make offer"
                 handleClick={() => {}}
                 classStyle={Style.button}
-              />
+              /> */}
             </div>
 
             <div className={Style.NFTDescription_box_profile_biding_box_tabs}>

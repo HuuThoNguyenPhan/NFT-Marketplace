@@ -14,9 +14,10 @@ import {
   Loader,
 } from "../components/componentsindex";
 import { getTopCreators } from "../utils/TopCreators/TopCreators";
+import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const Home = () => {
- 
+  const { fetchNFTs } = useContext(NFTMarketplaceContext);
   const [nfts, setNfts] = useState([]);
   const [nftsCopy, setNftsCopy] = useState([]);
 
@@ -31,6 +32,7 @@ const Home = () => {
   // }, []);
 
   //CREATOR LIST
+  const creators = getTopCreators(nfts);
 
   return (
     <div className={Style.homePage}>
@@ -45,6 +47,12 @@ const Home = () => {
         <FollowerTab TopCreator={creators} />
       )} */}
 
+      {creators.length == 0 ? (
+        <Loader />
+      ) : (
+        <FollowerTab TopCreator={creators} />
+      )}
+
       <Title
         heading="Thể loại"
         paragraph="Xem các sản phẩm NFT theo thể loại."
@@ -57,7 +65,7 @@ const Home = () => {
         paragraph="Discover the most outstanding NFTs in all topics of life."
       />
       <Filter />
-      {nfts.length == 0 ? <Loader /> : <NFTCard NFTData={nfts} />}
+      {/* {nfts.length == 0 ? <Loader /> : <NFTCard NFTData={nfts} />} */}
       <NFTCard />
     </div>
   );

@@ -4,12 +4,12 @@ import { FaEthereum, FaUserAlt } from "react-icons/fa";
 
 //INTERNAL IMPORT
 import Style from "../styles/transferFunds.module.css";
-import formStyle from "../AccountPage/Form/Form.module.css";
-import images from "../img";
+import formStyle from "../components/AccountPage/Form/Form.module.css";
+import images from "../assets/img";
 import { Button, Loader } from "../components/componentsindex";
 
 //IMPORT FROM CONTRACT DATA
-import { NFTMarketplaceContext } from "../Context/NFTMarketplaceContext";
+import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const transferFunds = () => {
   const {
@@ -114,13 +114,7 @@ const transferFunds = () => {
         </div>
 
         {/* //TRANSACTION HISTORY */}
-        <h1 className={Style.transfer_box_h1}>Transaction History</h1>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus cum
-          repellendus voluptates eveniet praesentium placeat unde sunt ducimus
-          consequatur ipsam.
-        </p>
-
+        <h1 className={Style.transfer_box_h1}>Lịch sử chuyển tiền</h1>
         <div className={Style.transfer_box_history}>
           {transactions.map((el, i) => (
             <div className={Style.transfer_box_history_item} key={i + 1}>

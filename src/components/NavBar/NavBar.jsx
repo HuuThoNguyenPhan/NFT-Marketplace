@@ -87,7 +87,7 @@ const NavBar = () => {
     if (element && currentAccount) {
       const addr = currentAccount.slice(2, 10);
       const seed = parseInt(addr, 16);
-      const icon = jazzicon(45, seed); //generates a size 20 icon
+      const icon = jazzicon(45, seed); 
       if (element.firstChild) {
         element.removeChild(element.firstChild);
       }

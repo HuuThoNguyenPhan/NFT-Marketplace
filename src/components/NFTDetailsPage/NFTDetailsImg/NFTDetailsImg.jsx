@@ -3,8 +3,8 @@ import Image from "next/image";
 import { BsImages } from "react-icons/bs";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
+import images from "../../../assets/img";
 
-//INTERNAL IMPORT
 import Style from "./NFTDetailsImg.module.css";
 
 const NFTDetailsImg = ({ nft }) => {
@@ -35,12 +35,53 @@ const NFTDetailsImg = ({ nft }) => {
     }
   };
 
+  const renderPreview = (typeFile, fileUrl) => {
+    switch (typeFile) {
+      case "image":
+        return (
+          <Image
+            className={Style.image}
+            src={fileUrl}
+            alt="nft image"
+            width={700}
+            height={800}
+            objectFit="contain"
+          />
+        );
+        break;
+      case "audio":
+        return (
+          <audio controls style={{ margin: "0 auto" }}>
+            <source src={fileUrl} />
+          </audio>
+        );
+        break;
+      case "video":
+        return (
+          <video width="200" height="150" controls style={{ margin: "0 auto" }}>
+            <source src={fileUrl} type="video/mp4" />
+          </video>
+        );
+        break;
+      default:
+        return (
+          <Image
+            className={Style.image}
+            src={images.file}
+            alt="nft image"
+            width={700}
+            height={800}
+            objectFit="contain"
+          />
+        );
+    }
+  };
+
   return (
     <div className={Style.NFTDetailsImg}>
       <div className={Style.NFTDetailsImg_box}>
         <div className={Style.NFTDetailsImg_box_NFT}>
           <div className={Style.NFTDetailsImg_box_NFT_like}>
-            <BsImages className={Style.NFTDetailsImg_box_NFT_like_icon} />
             <p onClick={() => likeNFT()}>
               {like ? (
                 <AiOutlineHeart
@@ -56,14 +97,15 @@ const NFTDetailsImg = ({ nft }) => {
           </div>
 
           <div className={Style.NFTDetailsImg_box_NFT_img}>
-            <Image
+            {renderPreview(nft.typeFile, nft.image)}
+            {/* <Image
               src={nft.image}
               className={Style.NFTDetailsImg_box_NFT_img_img}
               alt="NFT image"
               width={700}
               height={800}
               objectFit="cover"
-            />
+            /> */}
           </div>
         </div>
 
@@ -77,7 +119,7 @@ const NFTDetailsImg = ({ nft }) => {
 
         {description && (
           <div className={Style.NFTDetailsImg_box_description_box}>
-            {/* <p>{nft.description}</p> */}
+            <p>{nft.description}</p>
           </div>
         )}
 
@@ -91,15 +133,11 @@ const NFTDetailsImg = ({ nft }) => {
 
         {details && (
           <div className={Style.NFTDetailsImg_box_details_box}>
-            <small>2000 x 2000 px.IMAGE(685KB)</small>
+            <small>2000 x 2000 px.IMAGE({nft.size}MB)</small>
             <p>
-              <small>Contract Address</small>
+              <small>Địa chỉ hợp đồng:</small>
               <br></br>
-              {/* {nft.seller} */}
-            </p>
-            <p>
-              <small>Token ID</small>
-              {/* &nbsp; &nbsp; {nft.tokenId} */}
+              {nft.seller}
             </p>
           </div>
         )}

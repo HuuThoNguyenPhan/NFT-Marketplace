@@ -1,10 +1,13 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useContext, useEffect } from "react";
 
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 
 import Style from "./DropZone.module.css";
 import images from "../../../assets/img";
+
+import { NFTMarketplaceContext } from "../../../../Context/NFTMarketplaceContext";
+
 
 const DropZone = ({
   title,
@@ -14,23 +17,59 @@ const DropZone = ({
   website,
   description,
   royalties,
-  fileSize,
   category,
   properties,
   setImage,
+  setFileSize,
+  fileSize,
+  image,
 }) => {
+  const { setError, setOpenError } = useContext(NFTMarketplaceContext);
   const [fileUrl, setFileUrl] = useState(null);
 
+  useEffect(() => {
+    setError(), setOpenError();
+  }, []);
+
   const onDrop = useCallback(async (acceptedFile) => {
-    setFileUrl(acceptedFile[0]);
-    setImage(acceptedFile[0]);
+    if ((acceptedFile[0].size / 1048576).toFixed(2) <= 25) {
+      setFileSize((acceptedFile[0].size / 1048576).toFixed(2));
+      setFileUrl(URL.createObjectURL(acceptedFile[0]));
+      setImage(acceptedFile[0]);
+    } else {
+      setError("Kích thước tệp nhỏ hơn hoặc bằng 25MB"), setOpenError(true);
+    }
   });
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: "image/*",
-    maxSize: 5000000,
   });
+
+  const renderPreview = (typeFile) => {
+    
+    switch (typeFile.slice(0, typeFile.indexOf("/"))) {
+      case "image":
+        return <Image className={Style.image} src={fileUrl} alt="nft image" width={200} height={200} />;
+        break;
+      case "audio":
+        return (
+          <audio controls style={{ margin: "0 auto" }}>
+            <source src={fileUrl} />
+          </audio>
+        );
+        break;
+        case "video":
+          return (
+            <video  width="200" height="150" controls style={{ margin: "0 auto" }}>
+              <source src={fileUrl} type="video/mp4"/>
+            </video>
+          );
+          break;
+      default:
+        return <Image className={Style.image} src={images.file} alt="nft image" width={200} height={200} />;
+    }
+  };
 
   return (
     <div className={Style.DropZone}>
@@ -56,7 +95,8 @@ const DropZone = ({
       {fileUrl && (
         <aside className={Style.DropZone_box_aside}>
           <div className={Style.DropZone_box_aside_box}>
-            <Image src={fileUrl} alt="nft image" width={200} height={200} />
+
+            {fileUrl && renderPreview(image.type)}
 
             <div className={Style.DropZone_box_aside_box_preview}>
               <div className={Style.DropZone_box_aside_box_preview_one}>
@@ -84,7 +124,7 @@ const DropZone = ({
                 </p>
                 <p>
                   <span>FileSize</span>
-                  {fileSize || ""}
+                  {fileSize + " MB" || ""}
                 </p>
                 <p>
                   <span>Properties</span>
