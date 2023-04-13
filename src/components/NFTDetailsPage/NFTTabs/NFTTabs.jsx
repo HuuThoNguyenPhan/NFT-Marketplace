@@ -18,8 +18,8 @@ const NFTTabs = ({ dataTab, icon }) => {
           /> */}
           <div className={Style.NFTTabs_box_info}>
             <span>
-              {el}
-              {icon}
+              {/* {el}
+              {icon} */}
             </span>
 
             <small>Jun 14 - 4:12 PM</small>

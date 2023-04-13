@@ -40,7 +40,7 @@ const searchPage = () => {
           }
           finalItems.push(items[i]);
         }
-        console.log(finalItems);
+        console.log(items);
         setNfts(finalItems.reverse());
         setNftsCopy(finalItems);
       });

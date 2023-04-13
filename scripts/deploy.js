@@ -22,14 +22,14 @@ async function main() {
   let tokenId = await nftMarketplace
     .connect(address2)
     .createToken(
-      ["https://gateway.pinata.cloud/ipfs/QmeTu4GWg66pif69pAyEpL6EZUQc8TTNt7jfbiit6uk312"],
+      ["https://gateway.pinata.cloud/ipfs/QmdtZNoMmc4NS2zEDQZR5PN4CyoKK8rGok4d6w4ZRrAjXE"],
       price,
       { value: "25000000000000000" }
     );
   let tokenId2 = await nftMarketplace
     .connect(address1)
     .createToken(
-      ["https://gateway.pinata.cloud/ipfs/QmeTu4GWg66pif69pAyEpL6EZUQc8TTNt7jfbiit6uk312","https://gateway.pinata.cloud/ipfs/QmeTu4GWg66pif69pAyEpL6EZUQc8TTNt7jfbiit6uk312"],
+      ["https://gateway.pinata.cloud/ipfs/QmdtZNoMmc4NS2zEDQZR5PN4CyoKK8rGok4d6w4ZRrAjXE","https://gateway.pinata.cloud/ipfs/QmdtZNoMmc4NS2zEDQZR5PN4CyoKK8rGok4d6w4ZRrAjXE"],
       price,
       { value: "25000000000000000" }
     );

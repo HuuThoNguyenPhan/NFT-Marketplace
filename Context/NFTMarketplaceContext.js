@@ -6,7 +6,7 @@ import axios from "axios";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 
 const JWT =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIxMDQ1MDQyYy03Y2FlLTQzZGMtYTliZS0wMDNmMmVjZDYzNDYiLCJlbWFpbCI6InRob3BybzIwMDFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImE3OWQ2NDVkYjQyN2U4YWI5YTE5Iiwic2NvcGVkS2V5U2VjcmV0IjoiZjE0ODM1N2I5ZDA3MmIxZjMzZjlkM2U2YmFiODg4MWYwZGIxNjBlMjg0ZWQ3MDNhNDFlOTY3YTgzZTQ3N2RlNCIsImlhdCI6MTY3OTA3NDQ2Mn0.uK8viuDe9nYyzR2R_TGZMN98rfd1eZjfmWjMG3tNepI";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIyYWU1MDFhYi02OGE3LTQzYjMtYWM2NS04ZDNjNWIxYTQ2NzkiLCJlbWFpbCI6ImRldi5odXV0aG9AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjkyMTQwNmFlOTc5YzJjOWM3OTczIiwic2NvcGVkS2V5U2VjcmV0IjoiMzQyMmJmMzM0NGI1YjVkMDk2MmM2N2U0NjIxMTcwZmY1NzFkYTA3ZmU1MDU0YzNiNmFlODBjNGJmNjgxMjljYyIsImlhdCI6MTY4MTM3MTMzM30.KEvJUpkaL1SQcv8YonaMXplrKWJw82yQRF9FUKT7WM0";
 const subdomain = "your subdomain";
 
 import {
@@ -261,7 +261,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
   //--FETCHNFTS FUNCTION
 
   const fetchNFTs = async () => {
-    console.log("asss");
+
     try {
       // if (currentAccount
       // const web3Modal = new Web3Modal();
@@ -308,6 +308,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const image =
               "https://gateway.pinata.cloud/ipfs/" +
               metaData.image.slice(7, metaData.image.length);
+
+
             return {
               price,
               tokenId: tokenId.toNumber(),
@@ -561,7 +563,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         transactionCount,
         transactions,
         fecthOwner,
-        changeCurrency
+        changeCurrency,
       }}
     >
       {children}

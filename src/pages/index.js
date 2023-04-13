@@ -21,15 +21,15 @@ const Home = () => {
   const [nfts, setNfts] = useState([]);
   const [nftsCopy, setNftsCopy] = useState([]);
 
-  // useEffect(() => {
-  //   // if (currentAccount) {
-  //   fetchNFTs().then((items) => {
-  //     console.log(nfts);
-  //     setNfts(items.reverse());
-  //     setNftsCopy(items);
-  //   });
-  //   // }
-  // }, []);
+  useEffect(() => {
+    // if (currentAccount) {
+    fetchNFTs().then((items) => {
+      console.log(nfts);
+      setNfts(items.reverse());
+      setNftsCopy(items);
+    });
+    // }
+  }, []);
 
   //CREATOR LIST
   const creators = getTopCreators(nfts);
