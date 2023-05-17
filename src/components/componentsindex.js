@@ -14,7 +14,7 @@ import FollowerTab from "./FollowerTab/FollowerTab";
 import Slider from "./Slider/Slider";
 import Loader from "./Loader/Loader";
 import Error from "./Error/Error";
-
+import UploadProfile from "./CredentialPage/UploadProfile";
 export {
   Button,
   Footer,
@@ -32,4 +32,5 @@ export {
   Slider,
   Loader,
   Error,
+  UploadProfile
 };

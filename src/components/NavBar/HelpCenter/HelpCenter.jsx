@@ -28,6 +28,10 @@ const HelpCenter = () => {
     {
       name: "Chuyển tiền",
       link: "transferFunds"
+    },
+    {
+      name: "Xác thực người dùng",
+      link: "credential"
     }
   ];
   return (

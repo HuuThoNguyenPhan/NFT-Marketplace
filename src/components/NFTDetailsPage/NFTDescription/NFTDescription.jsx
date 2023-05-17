@@ -30,30 +30,21 @@ import { NFTTabs } from "../NFTDetailsIndex";
 import { NFTMarketplaceContext } from "../../../../Context/NFTMarketplaceContext";
 
 const NFTDescription = ({ nft }) => {
+  const { buyNFT, currentAccount, fecthOwner, changeCurrency } = useContext(
+    NFTMarketplaceContext
+  );
+
   const [social, setSocial] = useState(false);
   const [NFTMenu, setNFTMenu] = useState(false);
   const [history, setHistory] = useState(true);
   const [provanance, setProvanance] = useState(false);
   const [owner, setOwner] = useState(false);
-  const [ownerArray, setOwnerArray] = useState([])
-
+  const [ownerArray, setOwnerArray] = useState([images.user1]);
+  const [price, setPrice] = useState(nft.price);
   const router = useRouter();
-
-  const historyArray = [
-    images.user1,
-    images.user2,
-    images.user3,
-    images.user4,
-    images.user5,
-  ];
-  const provananceArray = [
-    images.user6,
-    images.user7,
-    images.user8,
-    images.user9,
-    images.user10,
-  ];
-
+  const [quantity, setQuantity] = useState(1);
+  const historyArray = ["gà"];
+  const provananceArray = ["gà"];
 
   const openSocial = () => {
     if (!social) {
@@ -92,22 +83,20 @@ const NFTDescription = ({ nft }) => {
       setOwner(true);
       setHistory(false);
       setProvanance(false);
-      fetchOwners()
     } else {
       setOwner(false);
       setHistory(true);
     }
   };
 
-  const fetchOwners = async () => {
-    fecthOwner([1,2]).then((owners)=>{
-      setOwnerArray(owners)
-    })
-  }
-  //SMART CONTRACT DATA
-  const { buyNFT, currentAccount, fecthOwner, changeCurrency } = useContext(
-    NFTMarketplaceContext
-  );
+  useEffect(() => {
+    changeCurrency(nft.price).then((e) => {
+      setPrice(e);
+    });
+    fecthOwner(nft.tokenIds).then((owners) => {
+      setOwnerArray(owners);
+    });
+  }, [owner, price]);
 
   return (
     <div className={Style.NFTDescription}>
@@ -249,13 +238,10 @@ const NFTDescription = ({ nft }) => {
                   Style.NFTDescription_box_profile_biding_box_price_bid
                 }
               >
-                <small>Current Bid</small>
-                <p>
-                  {nft.price} ETH <span>( ≈ $3,221.22)</span>
-                </p>
+                <small>Giá hiện tại || Số lượng: {nft.count} sản phẩm</small>
+                <p>{nft.price} ETH</p>
+                <p>(≈ {price})</p>
               </div>
-
-              <span>[{nft.count} trong kho]</span>
             </div>
 
             <div className={Style.NFTDescription_box_profile_biding_box_button}>
@@ -266,19 +252,40 @@ const NFTDescription = ({ nft }) => {
                   icon=<FaWallet />
                   btnName="List on Marketplace"
                   handleClick={() =>
-                    router.push(
-                      `/reSellToken?id=${nft.tokenId}&tokenURI=${nft.tokenURI}&price=${nft.price}`
-                    )
+                    router.push({
+                      pathname: "/reSellToken",
+                      query: {
+                        data: [
+                          nft.tokenURI,
+                          nft.price,
+                          nft.count,
+                          nft.name,
+                          nft.price,
+                        ],
+                        tokenIds: nft.tokenIds ? nft.tokenIds : nft.tokenId,
+                      },
+                    })
                   }
                   classStyle={Style.button}
                 />
               ) : (
-                <Button
-                  icon=<FaWallet />
-                  btnName="Buy NFT"
-                  handleClick={() => buyNFT(nft)}
-                  classStyle={Style.button}
-                />
+                <div>
+                  <input
+                    type="number"
+                    min={1}
+                    value={quantity}
+                    onChange={(e) => {
+                      setQuantity(e.target.value);
+                    }}
+                  />
+                  <span>{"[Số lượng mua < số lượng]"}</span>
+                  <Button
+                    icon=<FaWallet />
+                    btnName="Mua ngay"
+                    handleClick={() => buyNFT(nft, quantity)}
+                    classStyle={Style.button}
+                  />
+                </div>
               )}
 
               {/* <Button
@@ -306,9 +313,9 @@ const NFTDescription = ({ nft }) => {
               </div>
             )}
 
-            {owner && (
+            {owner && ownerArray && (
               <div className={Style.NFTDescription_box_profile_biding_box_card}>
-                <NFTTabs dataTab={ownerArray} icon=<MdVerified /> />
+                <NFTTabs dataTab={ownerArray} />
               </div>
             )}
           </div>

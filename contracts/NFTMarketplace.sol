@@ -106,39 +106,60 @@ contract NFTMarketplace is ERC721URIStorage {
     }
 
     /* allows someone to resell a token they have purchased */
-    function resellToken(uint256 tokenId, uint256 price) public payable {
-        require(
-            idToMarketItem[tokenId].owner == msg.sender,
-            "Only item owner can perform this operation"
-        );
+    function resellToken(
+        uint256[] memory tokenId,
+        uint256 price
+    ) public payable {
+        // require(
+        //     idToMarketItem[tokenId].owner == msg.sender,
+        //     "Only item owner can perform this operation"
+        // );
+        for (uint256 i = 0; i < tokenId.length; i++) {
+            require(
+                idToMarketItem[tokenId[i]].owner == msg.sender,
+                "Only item owner can perform this operation"
+            );
+        }
         require(
             msg.value == listingPrice,
             "Price must be equal to listing price"
         );
-        idToMarketItem[tokenId].sold = false;
-        idToMarketItem[tokenId].price = price;
-        idToMarketItem[tokenId].seller = payable(msg.sender);
-        idToMarketItem[tokenId].owner = payable(address(this));
-        _itemsSold.decrement();
+        for (uint256 i = 0; i < tokenId.length; i++) {
+            idToMarketItem[tokenId[i]].sold = false;
+            idToMarketItem[tokenId[i]].price = price;
+            idToMarketItem[tokenId[i]].seller = payable(msg.sender);
+            idToMarketItem[tokenId[i]].owner = payable(address(this));
+            _itemsSold.decrement();
 
-        _transfer(msg.sender, address(this), tokenId);
+            _transfer(msg.sender, address(this), tokenId[i]);
+        }
     }
 
     /* Creates the sale of a marketplace item */
     /* Transfers ownership of the item, as well as funds between parties */
-    function createMarketSale(uint256 tokenId) public payable {
-        uint256 price = idToMarketItem[tokenId].price;
+    function createMarketSale(uint256[] memory tokenId) public payable {
+        for (uint256 i = 0; i < tokenId.length; i++) {
+            require(idToMarketItem[tokenId[i]].sold == false, "Item is sold");
+        }
+        uint256 price = 0;
+
+        for (uint256 i = 0; i < tokenId.length; i++) {
+            price = price + idToMarketItem[tokenId[i]].price;
+        }
+
         require(
             msg.value == price,
             "Please submit the asking price in order to complete the purchase"
         );
-        idToMarketItem[tokenId].owner = payable(msg.sender);
-        idToMarketItem[tokenId].sold = true;
-        idToMarketItem[tokenId].seller = payable(address(0));
-        _itemsSold.increment();
-        _transfer(address(this), msg.sender, tokenId);
+        for (uint256 i = 0; i < tokenId.length; i++) {
+            idToMarketItem[tokenId[i]].owner = payable(msg.sender);
+            idToMarketItem[tokenId[i]].sold = true;
+            idToMarketItem[tokenId[i]].seller = payable(address(0));
+            _itemsSold.increment();
+            _transfer(address(this), msg.sender, tokenId[i]);
+        }
         payable(owner).transfer(listingPrice);
-        payable(idToMarketItem[tokenId].seller).transfer(msg.value);
+        payable(idToMarketItem[tokenId[0]].seller).transfer(msg.value);
     }
 
     /* Returns all unsold market items */

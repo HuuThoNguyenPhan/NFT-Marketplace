@@ -12,29 +12,81 @@ import { Button } from "../components/componentsindex";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const reSellToken = () => {
-  const { createSale } = useContext(NFTMarketplaceContext);
+  const { createSale, fetchTokenURI, setError, setOpenError } = useContext(
+    NFTMarketplaceContext
+  );
   const [image, setImage] = useState("");
   const [price, setPrice] = useState('"');
+  const [name, setName] = useState("");
   const [quantity, setQuantity] = useState(1);
   const router = useRouter();
-  const { id, tokenURI } = router.query;
+  const [count, setCount] = useState(1);
+  const [tkIds, setTkIds] = useState([]);
 
-  const fetchNFT = async () => {
+  const fetchNFT = async (tokenURI) => {
     if (!tokenURI) return;
 
     const { data } = await axios.get(tokenURI);
 
-    setImage(data.image);
+    setImage(
+      "https://gateway.pinata.cloud/ipfs/" +
+        data.products.image.slice(7, data.products.image.length)
+    );
   };
 
   useEffect(() => {
-    fetchNFT();
-  }, [id]);
+    if (!router.isReady) return;
+    const tokenURI = router.query.data[0];
+
+    if (!typeof router.query.tokenIds == "string") {
+      setTkIds(router.query.tokenIds);
+    } else {
+      setTkIds([router.query.tokenIds]);
+    }
+    setName(router.query.data[3]);
+    setCount(router.query.data[2]);
+    setPrice(router.query.data[4]);
+    fetchNFT(tokenURI);
+  }, [router.isReady]);
 
   const resell = async () => {
     try {
-      await createSale(tokenURI, price, quantity, true, id);
-      router.push("/author");
+      if (quantity > count) {
+        setError("Số lượng nhập vào lớn hơn trong kho");
+        setOpenError(true);
+        return;
+      }
+      const ids = [];
+      for (let i = 0; i < quantity; i++) {
+        ids.push(parseInt(tkIds[0][i]));
+        
+      }
+      console.log(ids);
+      fetchTokenURI(ids).then(async (item) => {
+        const time = name + new Date().getTime()
+        let header = {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+        };
+        let body = JSON.stringify({
+          time: name + time.toString(),
+          ids: item,
+        });
+        let req = {
+          url: "http://localhost:5000/api/v1/products/changeBreed",
+          method: "POST",
+          headers: header,
+          data: body,
+        };
+
+        let response = await axios.request(req);
+        console.log(item);
+        if (response.status == 200) {
+          await createSale("", price, quantity, true, ids);
+          router.push("/author");
+        }
+        console.log(response);
+      });
     } catch (error) {
       console.log("Error while resell", error);
     }
@@ -44,19 +96,31 @@ const reSellToken = () => {
       <div className={Style.reSellToken_box}>
         <h1>ReSell Your Token, Set Price</h1>
         <div className={formStyle.Form_box_input}>
-          <label htmlFor="name">Price</label>
+          <label htmlFor="name">Giá</label>
+          <input
+            style={{ marginBottom: 2 + "rem" }}
+            type="number"
+            min={1}
+            placeholder="Đặt lại giá"
+            value={price}
+            className={formStyle.Form_box_input_userName}
+            onChange={(e) => setPrice(e.target.value)}
+          />
+          <label htmlFor="name">
+            Số lượng (còn {count || 1} trong kho) {tkIds}
+          </label>
           <input
             type="number"
             min={1}
-            placeholder="reSell price"
+            value={quantity}
             className={formStyle.Form_box_input_userName}
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={(e) => setQuantity(e.target.value)}
           />
         </div>
 
         <div className={Style.reSellToken_box_image}>
           {image && (
-            <Image src={image} alt="resell nft" width={400} height={400} />
+            <Image src={image} alt="resell nft" width={700} height={400} />
           )}
         </div>
 

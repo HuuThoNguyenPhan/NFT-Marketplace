@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-
 
 import { Category } from "../components/componentsindex";
 import NFTDetailsPage from "../components/NFTDetailsPage/NFTDetailsPage";
+import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const NFTDetails = () => {
-
+  
+  const [usd, setUSD] = useState();
   const [nft, setNft] = useState({
     image: "",
     tokenId: "",
@@ -15,7 +16,7 @@ const NFTDetails = () => {
     price: "",
     seller: "",
   });
-  
+
   const router = useRouter();
 
   useEffect(() => {

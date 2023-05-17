@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "h1": "npx hardhat node",
+    "h2": "npx hardhat run scripts/deploy.js --network localhost"
   },
   "dependencies": {
     "@metamask/jazzicon": "^2.0.0",

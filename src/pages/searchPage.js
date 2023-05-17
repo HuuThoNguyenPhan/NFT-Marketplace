@@ -27,20 +27,23 @@ const searchPage = () => {
       fetchNFTs().then((items) => {
         const finalItems = [];
         for (let i = 0; i < items.length; i++) {
-          if (items[i].breed != undefined) {
+          if (items[i].breed != 1) {
             items[i].count = 1;
             items[i].tokenIds = [];
+            items[i].tokenIds.push(items[i].tokenId)
             for (let j = i + 1; j < items.length; j++) {
+
               if (items[j].breed == items[i].breed) {
                 items[i].count++;
                 items[i].tokenIds.push(items[j].tokenId)
                 items.splice(j, 1);
+                j--;
               }
             }
           }
           finalItems.push(items[i]);
         }
-        console.log(items);
+        
         setNfts(finalItems.reverse());
         setNftsCopy(finalItems);
       });

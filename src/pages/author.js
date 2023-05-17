@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 
-
 import Style from "../styles/author.module.css";
 import { Banner } from "../components/collectionPage/collectionIndex";
-import { Title } from "../components/componentsindex";
+import { Loader, Title } from "../components/componentsindex";
 import FollowerTabCard from "../components/FollowerTab/FollowerTabCard/FollowerTabCard";
 import images from "../assets/img";
 import {
@@ -54,7 +53,6 @@ const author = () => {
   const [follower, setFollower] = useState(false);
   const [following, setFollowing] = useState(false);
 
-  
   const { fetchMyNFTsOrListedNFTs, currentAccount } = useContext(
     NFTMarketplaceContext
   );
@@ -62,19 +60,54 @@ const author = () => {
   const [nfts, setNfts] = useState([]);
   const [myNFTs, setMyNFTs] = useState([]);
 
+
   useEffect(() => {
     fetchMyNFTsOrListedNFTs("fetchItemsListed").then((items) => {
-      setNfts(items);
+      const finalItems = [];
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].breed != 1) {
+            items[i].count = 1;
+            items[i].tokenIds = [];
+            items[i].tokenIds.push(items[i].tokenId)
+            for (let j = i + 1; j < items.length; j++) {
+
+              if (items[j].breed == items[i].breed) {
+                items[i].count++;
+                items[i].tokenIds.push(items[j].tokenId)
+                items.splice(j, 1);
+                j--;
+              }
+            }
+          }
+          finalItems.push(items[i]);
+        }
+      setNfts(finalItems);
     });
-  }, []);
+  }, [collectiables]);
 
   useEffect(() => {
     fetchMyNFTsOrListedNFTs("fetchMyNFTs").then((items) => {
-      console.log(items)
-      setMyNFTs(items);
+      const finalItems = [];
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].breed != 1) {
+            items[i].count = 1;
+            items[i].tokenIds = [];
+            items[i].tokenIds.push(items[i].tokenId)
+            for (let j = i + 1; j < items.length; j++) {
 
+              if (items[j].breed == items[i].breed) {
+                items[i].count++;
+                items[i].tokenIds.push(items[j].tokenId)
+                items.splice(j, 1);
+                j--;
+              }
+            }
+          }
+          finalItems.push(items[i]);
+        }
+      setMyNFTs(finalItems);
     });
-  }, []);
+  }, [created]);
 
   return (
     <div className={Style.author}>
@@ -87,7 +120,6 @@ const author = () => {
         setFollower={setFollower}
         setFollowing={setFollowing}
       />
-
       <AuthorNFTCardBox
         collectiables={collectiables}
         created={created}
@@ -99,8 +131,7 @@ const author = () => {
       />
       <Title
         heading="Popular Creators"
-        paragraph="Click on music icon and enjoy NTF music or audio
-"
+        paragraph="Click on music icon and enjoy NTF music or audio"
       />
       <div className={Style.author_box}>
         {followerArray.map((el, i) => (

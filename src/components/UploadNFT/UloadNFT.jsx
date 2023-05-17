@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { MdOutlineHttp, MdOutlineAttachFile } from "react-icons/md";
 import { FaPercent } from "react-icons/fa";
 import { AiTwotonePropertySafety } from "react-icons/ai";
@@ -11,8 +11,10 @@ import formStyle from "../AccountPage/Form/Form.module.css";
 import images from "../../assets/img";
 import { Button } from "../../components/componentsindex.js";
 import { DropZone } from "../UploadNFT/uploadNFTIndex.js";
+import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
 const UloadNFT = ({ uploadToIPFS, createNFT }) => {
+  let [priceVND,setPriceVND] = useState("");
   const [price, setPrice] = useState("");
   const [active, setActive] = useState(0);
   const [name, setName] = useState("");
@@ -21,10 +23,10 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
   const [royalties, setRoyalties] = useState("");
   const [fileSize, setFileSize] = useState("");
   const [category, setCategory] = useState(0);
-  const [properties, setProperties] = useState("");
+  const [limit, setLimit] = useState(1);
   const [image, setImage] = useState(null);
   const [quantity, setQuantity] = useState(1);
-
+  const { changeCurrency } = useContext(NFTMarketplaceContext);
   const router = useRouter();
 
   const categoryArry = [
@@ -64,10 +66,16 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
     });
   };
 
+  useEffect(() => {
+    changeCurrency(1).then((e) => {
+      setPriceVND(e)
+    });  
+  },[])
+
   return (
     <div className={Style.upload}>
       <DropZone
-        title="JPG, PNG, WEBM , MAX 25MB"
+        title="JPG, PNG, WEBM"
         heading="Kéo và thả tệp"
         subHeading="hoặc tải tệp lên từ thiết bị của bạn"
         name={name}
@@ -76,7 +84,6 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
         royalties={royalties}
         setFileSize={setFileSize}
         category={category}
-        properties={properties}
         setImage={setImage}
         fileSize={fileSize}
         image={image}
@@ -194,15 +201,23 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
             </div>
           </div>
           <div className={formStyle.Form_box_input}>
-            <label htmlFor="Propertie">Thuộc tính</label>
+            <label htmlFor="Propertie">Giới hạn một lần mua</label>
             <div className={formStyle.Form_box_input_box}>
               <div className={formStyle.Form_box_input_box_icon}>
                 <AiTwotonePropertySafety />
               </div>
               <input
                 type="text"
-                placeholder="Propertie"
-                onChange={(e) => setProperties(e.target.value)}
+                value={limit}
+                onChange={(e) =>
+                  setLimit(() => {
+                    if (e.target.value > quantity) {
+                      return quantity;
+                    } else {
+                      return e.target.value;
+                    }
+                  })
+                }
               />
             </div>
           </div>
@@ -215,8 +230,7 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
               </div>
               <input
                 type="text"
-                placeholder="Price"
-                value={price}
+                placeholder={"1 ETH ≈ " + priceVND || ""}
                 onChange={(e) => handleNumber(e, setPrice)}
               />
             </div>
@@ -248,7 +262,8 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
                 image,
                 description,
                 router,
-                quantity
+                quantity,
+                limit
                 // website,
                 // royalties,
                 // fileSize,

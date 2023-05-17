@@ -1,27 +1,22 @@
-import React, { useEffect, useState, useContext } from "react";
+import React from "react";
 
-//INTERNAL IMPORT
 import Style from "../styles/upload-nft.module.css";
-import { UploadNFT } from "../components/UploadNFT/uploadNFTIndex";
-import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
-
-//SMART CONTRACT IMPORT
+import { UploadProfile } from "../components/componentsindex";
 
 const uploadNFT = () => {
-  const { uploadToIPFS, createNFT } = useContext(NFTMarketplaceContext);
-
   return (
     <div className={Style.uploadNFT}>
       <div className={Style.uploadNFT_box}>
         <div className={Style.uploadNFT_box_heading}>
-          <h1>Tạo sản phẩm NFT</h1>
+          <h1>Xác thực người dùng</h1>
           <p>
-            Bạn có thể đặt tên hiển thị ưa thích, tạo URL hồ sơ của mình và tùy chỉnh các thông tin sản phẩm.
+            You can set preferred display name, create your profile URL and
+            manage other personal settings.
           </p>
         </div>
 
         <div className={Style.uploadNFT_box_title}>
-          <h2>Ảnh, Video, Tệp âm thanh, hoặc 3D </h2>
+          <h2>Image, Video, Audio, or 3D Model</h2>
           <p>
             Các loại tệp hỗ trợ: JPG, PNG, GIF, SVG, MP4, WEBM, MP3, WAV, OGG,
             GLB, GLTF. Kích thước tối đa: 25 MB
@@ -29,7 +24,7 @@ const uploadNFT = () => {
         </div>
 
         <div className={Style.uploadNFT_box_form}>
-          <UploadNFT createNFT={createNFT} />
+          <UploadProfile />
         </div>
       </div>
     </div>
