@@ -6,15 +6,34 @@ import NFTDetailsPage from "../components/NFTDetailsPage/NFTDetailsPage";
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const NFTDetails = () => {
-  
-  const [usd, setUSD] = useState();
+  const {fetchDetailAuction} = useContext(NFTMarketplaceContext);
   const [nft, setNft] = useState({
-    image: "",
     tokenId: "",
+    image: "",
     name: "",
+    description: "",
+    tokenURI: "",
+    typeFile: "",
+    breed: "",
+    size: "",
+    limit: "",
+    auctioneer: "",
+    initPrice: "",
+    previousBidder: "",
+    lastPrice: "",
+    lastBidder: "",
+    startTime: "",
+    endTime: "",
+    remaining: "",
+    completed: "",
+    active: "",
+    auctionId: "",
     owner: "",
-    price: "",
     seller: "",
+    author: "",
+    royalties: "",
+    completed: "",
+    active:"",
   });
 
   const router = useRouter();
@@ -22,11 +41,21 @@ const NFTDetails = () => {
   useEffect(() => {
     if (!router.isReady) return;
 
-    setNft(router.query);
+    console.log(router.query.auctionId);
+    if(router.query.auctionId){
+      fetchDetailAuction(router.query.auctionId).then((res) => {
+        console.log(res);
+        setNft(res);
+      });
+    }
+    else{
+      setNft(router.query);
+    }
   }, [router.isReady]);
 
   return (
     <div>
+    <div>{nft.auctionId}</div>
       <NFTDetailsPage nft={nft} />
       <Category />
     </div>

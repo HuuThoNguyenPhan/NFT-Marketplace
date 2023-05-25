@@ -8,9 +8,11 @@ import Style from "./AuthorTaps.module.css";
 const AuthorTaps = ({
   setCollectiables,
   setCreated,
+  setAuction,
   setLike,
   setFollower,
   setFollowing,
+  setEndAuction
 }) => {
   const [openList, setOpenList] = useState(false);
   const [activeBtn, setActiveBtn] = useState(1);
@@ -34,41 +36,45 @@ const AuthorTaps = ({
   const openTab = (e) => {
     const btnText = e.target.innerText;
     console.log(btnText);
-    if (btnText == "Listed NFTs") {
+    if (btnText == "NFTs đang bán") {
       setCollectiables(true);
       setCreated(false);
-      setFollower(false);
-      setFollowing(false);
-      setLike(false);
+      setAuction(false);
+      setEndAuction(false);
       setActiveBtn(1);
-    } else if (btnText == "Own NFT") {
+    } else if (btnText == "NFTs sở hữu") {
       setCollectiables(false);
       setCreated(true);
-      setFollower(false);
-      setFollowing(false);
-      setLike(false);
+      setAuction(false);
+      setEndAuction(false);
       setActiveBtn(2);
-    } else if (btnText == "Liked") {
+    } else if (btnText == "Đấu giá") {
       setCollectiables(false);
       setCreated(false);
-      setFollower(false);
-      setFollowing(false);
-      setLike(true);
+      setAuction(true);
+      setEndAuction(false);
       setActiveBtn(3);
-    } else if (btnText == "Following") {
+    } else if (btnText == "kết thúc đấu giá") {
       setCollectiables(false);
       setCreated(false);
-      setFollower(false);
-      setFollowing(true);
-      setLike(false);
+      setAuction(false);
+      setEndAuction(true);
       setActiveBtn(4);
-    } else if (btnText == "Followers") {
-      setCollectiables(false);
-      setCreated(false);
-      setFollower(true);
-      setFollowing(false);
-      setLike(false);
-      setActiveBtn(5);
+    // } else if (btnText == "Following") {
+    //   setCollectiables(false);
+    //   setCreated(false);
+    //   setFollower(false);
+    //   setFollowing(true);
+    //   setLike(false);
+    //   setActiveBtn(5);
+    // } else if (btnText == "Followers") {
+    //   setCollectiables(false);
+    //   setCreated(false);
+    //   setFollower(true);
+    //   setFollowing(false);
+    //   setLike(false);
+    //   setActiveBtn(6);
+    // }
     }
   };
 
@@ -81,32 +87,44 @@ const AuthorTaps = ({
               className={`${activeBtn == 1 ? Style.active : ""}`}
               onClick={(e) => openTab(e)}
             >
-              Listed NFTs
+              NFTs đang bán
             </button>
             <button
               className={`${activeBtn == 2 ? Style.active : ""}`}
               onClick={(e) => openTab(e)}
             >
-              Own NFT
+              NFTs sở hữu
             </button>
             <button
               className={`${activeBtn == 3 ? Style.active : ""}`}
               onClick={(e) => openTab(e)}
             >
-              Liked
+              Đấu giá
             </button>
             <button
               className={`${activeBtn == 4 ? Style.active : ""}`}
               onClick={(e) => openTab(e)}
             >
-              Following
+              kết thúc đấu giá
+            </button>
+            {/* <button
+              className={`${activeBtn == 4 ? Style.active : ""}`}
+              onClick={(e) => openTab(e)}
+            >
+              Liked
             </button>
             <button
               className={`${activeBtn == 5 ? Style.active : ""}`}
               onClick={(e) => openTab(e)}
             >
-              Followers
+              Following
             </button>
+            <button
+              className={`${activeBtn == 6 ? Style.active : ""}`}
+              onClick={(e) => openTab(e)}
+            >
+              Followers
+            </button> */}
           </div>
         </div>
 

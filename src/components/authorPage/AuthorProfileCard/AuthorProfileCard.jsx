@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
   MdVerified,
@@ -18,11 +18,14 @@ import { BsThreeDots } from "react-icons/bs";
 import Style from "./AuthorProfileCard.module.css";
 import images from "../../../assets/img";
 import { Button } from "../../../components/componentsindex.js";
-
+import jazzicon from "@metamask/jazzicon";
 const AuthorProfileCard = ({ currentAccount }) => {
   const [share, setShare] = useState(false);
   const [report, setReport] = useState(false);
-
+  const sellerRef = useRef();
+  useEffect(() => {
+    convertImage(currentAccount, sellerRef);
+  })
   //copyAddress function
   const copyAddress = () => {
     const copyText = document.getElementById("myInput");
@@ -31,6 +34,17 @@ const AuthorProfileCard = ({ currentAccount }) => {
     navigator.clipboard.writeText(copyText.value);
   };
 
+  const convertImage = (address, ref) => {
+    const { current: element } = ref;
+    if (element && address) {
+      const seed = parseInt(address.slice(2, 10), 16);
+      const icon = jazzicon(100, seed); 
+      if (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
+      element.appendChild(icon);
+    }
+  }
   const openShare = () => {
     if (!share) {
       setShare(true);
@@ -53,18 +67,12 @@ const AuthorProfileCard = ({ currentAccount }) => {
     <div className={Style.AuthorProfileCard}>
       <div className={Style.AuthorProfileCard_box}>
         <div className={Style.AuthorProfileCard_box_img}>
-          <Image
-            src={images.nft_image_1}
-            className={Style.AuthorProfileCard_box_img_img}
-            alt="NFT IMAGES"
-            width={220}
-            height={220}
-          />
+          <div ref={sellerRef} style={{cursor: "pointer", display: "flex", justifyContent:"center"}}></div>
         </div>
 
         <div className={Style.AuthorProfileCard_box_info}>
           <h2>
-            Dony Herrera
+            Chưa đặt tên
             <span>
               <MdVerified />
             </span>
@@ -100,7 +108,7 @@ const AuthorProfileCard = ({ currentAccount }) => {
         </div>
 
         <div className={Style.AuthorProfileCard_box_share}>
-          <Button btnName="Follow" handleClick={() => {}} />
+          <Button btnName="Theo dõi" handleClick={() => {}} />
           <MdCloudUpload
             onClick={() => openShare()}
             className={Style.AuthorProfileCard_box_share_icon}

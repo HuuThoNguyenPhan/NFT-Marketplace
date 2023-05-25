@@ -24,9 +24,10 @@ const Home = () => {
   useEffect(() => {
     // if (currentAccount) {
     fetchNFTs().then((items) => {
-      console.log(nfts);
-      setNfts(items.reverse());
-      setNftsCopy(items);
+      if(items){
+        setNfts(items.reverse());
+        setNftsCopy(items);
+      }
     });
     // }
   }, []);
@@ -58,15 +59,12 @@ const Home = () => {
         paragraph="Xem các sản phẩm NFT theo thể loại."
       />
       <Category />
-      <Slider />
-      <Collection />
-      <Title
-        heading="Featured NFTs"
-        paragraph="Discover the most outstanding NFTs in all topics of life."
-      />
-      <Filter />
-      {/* {nfts.length == 0 ? <Loader /> : <NFTCard NFTData={nfts} />} */}
-      <NFTCard />
+      <Slider nfts={nfts} title="NFTs Ảnh"/>
+      <Slider nfts={nfts} title="NFTs Video"/>
+      <Slider nfts={nfts} title="NFTs Âm thanh"/>
+      <Slider nfts={nfts} title="NFTs các loại tệp khác" />
+      {/* <Filter />
+      {nfts.length == 0 ? <Loader /> : <NFTCard NFTData={nfts} />} */}
     </div>
   );
 };

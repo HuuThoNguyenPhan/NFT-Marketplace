@@ -27,9 +27,9 @@ const Footer = () => {
             <DiJqueryLogo className={Style.footer_box_social_logo} />
           </a>
           <p>
-            The world’s first and largest digital marketplace for crypto
-            collectibles and non-fungible tokens (NFTs). Buy, sell, and discover
-            exclusive digital items.
+            Thị trường kỹ thuật số đầu tiên dành cho tiền điện tử
+            đồ sưu tầm và mã Token không thể thay thế (NFT). Mua, bán và khám phá
+            các mặt hàng kỹ thuật số độc quyền.
           </p>
 
           <div className={Style.footer_social}>
@@ -52,26 +52,26 @@ const Footer = () => {
         </div>
 
         <div className={Style.footer_box_discover}>
-          <h3>Discover</h3>
+          <h3>Trang</h3>
           <Discover />
         </div>
 
         <div className={Style.footer_box_help}>
-          <h3>Help Center</h3>
+          <h3>Trợ giúp</h3>
           <HelpCenter />
         </div>
 
         <div className={Style.subscribe}>
-          <h3>Subscribe</h3>
+          <h3>Đăng ký</h3>
 
           <div className={Style.subscribe_box}>
-            <input type="email" placeholder="Enter your email *" />
+            <input type="email" placeholder="Nhập Email của bạn *" />
             <RiSendPlaneFill className={Style.subscribe_box_send} />
           </div>
           <div className={Style.subscribe_box_info}>
             <p>
-              Discover, collect, and sell extraordinary NFTs OpenSea is the
-              world first and largest NFT marketplace
+            Khám phá, thu thập và bán NFT đặc biệt. OpenSea là
+              thị trường NFT đầu tiên và lớn nhất thế giới
             </p>
           </div>
         </div>

@@ -5,16 +5,17 @@ import Style from "./AuthorNFTCardBox.module.css";
 import images from "../../../assets/img";
 import { NFTCardTwo } from "../../collectionPage/collectionIndex";
 import FollowerTabCard from "../../../components/FollowerTab/FollowerTabCard/FollowerTabCard";
-import { Loader } from "../../componentsindex";
+import { Loader, NFTCard } from "../../componentsindex";
 
 const AuthorNFTCardBox = ({
   collectiables,
   created,
-  like,
-  follower,
-  following,
   nfts,
   myNFTS,
+  auction,
+  auctions,
+  endAuction,
+  endAuctions,
 }) => {
   // const collectiablesArray = [
   //   images.nft_image_1,
@@ -104,9 +105,11 @@ const AuthorNFTCardBox = ({
   ];
   return (
     <div className={Style.AuthorNFTCardBox}>
-      {collectiables && nfts && <NFTCardTwo NFTData={nfts} />}
-      {created && myNFTS && <NFTCardTwo NFTData={myNFTS} /> }
-      {like && <NFTCardTwo NFTData={nfts} />}
+      {collectiables && nfts && <NFTCard NFTData={nfts} />}
+      {created && myNFTS && <NFTCard NFTData={myNFTS} />}
+      {auction && auctions && <NFTCard NFTData={auctions} />}
+      {endAuction && endAuctions && <NFTCard NFTData={endAuctions} />}
+      {/* {like && <NFTCardTwo NFTData={nfts} />}
       {follower && (
         <div className={Style.AuthorNFTCardBox_box}>
           {followerArray.map((el, i) => (
@@ -120,7 +123,7 @@ const AuthorNFTCardBox = ({
             <FollowerTabCard i={i} el={el} />
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 };

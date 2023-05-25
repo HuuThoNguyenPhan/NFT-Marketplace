@@ -62,11 +62,8 @@ const Filter = (props) => {
     <div className={Style.filter}>
       <div className={Style.filter_box}>
         <div className={Style.filter_box_left}>
-          <button onClick={() => {}}>NFTs</button>
-          <button onClick={() => {}}>Arts</button>
-          <button onClick={() => {}}>Musics</button>
-          <button onClick={() => {}}>Sports</button>
-          <button onClick={() => {}}>Photography</button>
+          <button onClick={() => {props.setNft(true)}}>Sản phẩm</button>
+          <button onClick={() => {props.setNft(false)}}>Đấu giá</button>
         </div>
 
         <div className={Style.filter_box_right}>
@@ -75,7 +72,7 @@ const Filter = (props) => {
             onClick={() => openFilter()}
           >
             <FaFilter />
-            <span>Filter</span> {filter ? <FaAngleDown /> : <FaAngleUp />}
+            <span>Lọc</span> {filter ? <FaAngleDown /> : <FaAngleUp />}
           </div>
         </div>
       </div>

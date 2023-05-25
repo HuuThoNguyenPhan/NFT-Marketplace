@@ -101,27 +101,6 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
         </div>
 
         <div className={formStyle.Form_box_input}>
-          <label htmlFor="website">Website</label>
-          <div className={formStyle.Form_box_input_box}>
-            <div className={formStyle.Form_box_input_box_icon}>
-              <MdOutlineHttp />
-            </div>
-
-            <input
-              type="text"
-              placeholder="website"
-              onChange={(e) => setWebsite(e.target.value)}
-            />
-          </div>
-
-          <p className={Style.upload_box_input_para}>
-            Ciscrypt will include a link to this URL on this item's detail page,
-            so that users can click to learn more about it. You are welcome to
-            link to your own webpage with more details.
-          </p>
-        </div>
-
-        <div className={formStyle.Form_box_input}>
           <label htmlFor="description">Mô tả</label>
           <textarea
             name=""
@@ -137,40 +116,6 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
           </p>
         </div>
 
-        <div className={formStyle.Form_box_input}>
-          <label htmlFor="name">Choose collection</label>
-          <p className={Style.upload_box_input_para}>
-            Choose an exiting collection or create a new one
-          </p>
-
-          <div className={Style.upload_box_slider_div}>
-            {categoryArry.map((el, i) => (
-              <div
-                className={`${Style.upload_box_slider} ${
-                  active == i + 1 ? Style.active : ""
-                }`}
-                key={i + 1}
-                onClick={() => (setActive(i + 1), setCategory(el.category))}
-              >
-                <div className={Style.upload_box_slider_box}>
-                  <div className={Style.upload_box_slider_box_img}>
-                    <Image
-                      src={el.image}
-                      alt="background image"
-                      width={70}
-                      height={70}
-                      className={Style.upload_box_slider_box_img_img}
-                    />
-                  </div>
-                  <div className={Style.upload_box_slider_box_img_icon}>
-                    <TiTick />
-                  </div>
-                </div>
-                <p>Crypto Legend - {el.category} </p>
-              </div>
-            ))}
-          </div>
-        </div>
 
         <div className={formStyle.Form_box_input_social}>
           <div className={formStyle.Form_box_input}>
@@ -229,9 +174,9 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
                 <AiTwotonePropertySafety />
               </div>
               <input
-                type="text"
+                type="number"
                 placeholder={"1 ETH ≈ " + priceVND || ""}
-                onChange={(e) => handleNumber(e, setPrice)}
+                onChange={(e) => setPrice(e.target.value)}
               />
             </div>
           </div>
@@ -254,7 +199,7 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
 
         <div className={Style.upload_box_btn}>
           <Button
-            btnName="Upload"
+            btnName="Tạo NFT"
             handleClick={async () =>
               createNFT(
                 name,
@@ -271,11 +216,6 @@ const UloadNFT = ({ uploadToIPFS, createNFT }) => {
                 // properties
               )
             }
-            classStyle={Style.upload_box_btn_style}
-          />
-          <Button
-            btnName="Preview"
-            handleClick={() => {}}
             classStyle={Style.upload_box_btn_style}
           />
         </div>

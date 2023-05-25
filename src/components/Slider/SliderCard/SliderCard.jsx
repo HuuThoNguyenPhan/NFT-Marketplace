@@ -13,32 +13,33 @@ const SliderCard = ({ el, i }) => {
       <div className={Style.sliderCard_box}>
         <motion.div className={Style.sliderCard_box_img}>
           <Image
-            src={el.background}
+            src={el.image}
             className={Style.sliderCard_box_img_img}
             alt="slider profile"
             width={500}
             height={300}
-            objectFit="cover"
+            objectFit="contain"
           />
         </motion.div>
         <div className={Style.sliderCard_box_title}>
-          <p>NFT Video #{i + 1}</p>
+          <p>{el.name} #{el.tokenId}</p>
           <div className={Style.sliderCard_box_title_like}>
             {/* <LikeProfile /> */}
-            <small>{i + 4} 0f 100</small>
+            <small>{el.limit || 1} trong kho</small>
           </div>
         </div>
 
         <div className={Style.sliderCard_box_price}>
           <div className={Style.sliderCard_box_price_box}>
-            <small>Current Bid</small>
-            <p>{i + 2}.000 ETH</p>
+            <small>Giá hiện tại</small>
+            <p>{el.lastPrice || el.price} ETH</p>
           </div>
 
           <div className={Style.sliderCard_box_price_time}>
             <small>Reaming time</small>
             <p>
-              {i + 1}h : 15m : {i + 4}0s
+            {el.remaining}
+              {/* {i + 1}h : 15m : {i + 4}0s */}
             </p>
           </div>
         </div>

@@ -32,15 +32,16 @@ const NFTCard = ({ NFTData }) => {
 
   return (
     <div className={Style.NFTCard}>
-      {CardArray.map((el, i) => (
+      {NFTData.map((el, i) => (
         <Link href={{ pathname: "/NFT-details", query: el }}>
           <div className={Style.NFTCard_box} key={i + 1}>
             <div className={Style.NFTCard_box_img}>
               <Image
-                src={el}
+                src={el.image}
                 alt="NFT images"
                 width={600}
                 height={600}
+                objectFit="contain"
                 className={Style.NFTCard_box_img_img}
               />
             </div>
@@ -83,15 +84,15 @@ const NFTCard = ({ NFTData }) => {
                     <div
                       className={Style.NFTCard_box_update_details_price_box_bid}
                     >
-                      <small>Current Bid</small>
-                      <p>{el.price}ETH</p>
+                      <small>Giá hiện tại</small>
+                      <p>{el.price} ETH</p>
                     </div>
                     <div
                       className={
                         Style.NFTCard_box_update_details_price_box_stock
                       }
                     >
-                      <small>61 in stock</small>
+                      <small>{el.limit} trong kho</small>
                     </div>
                   </div>
                 </div>

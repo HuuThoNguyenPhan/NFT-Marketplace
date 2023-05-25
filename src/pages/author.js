@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useRouter } from "next/router";
 
 import Style from "../styles/author.module.css";
 import { Banner } from "../components/collectionPage/collectionIndex";
@@ -14,6 +15,10 @@ import {
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const author = () => {
+  const { fetchMyNFTsOrListedNFTs, currentAccount, fetchAuction } = useContext(
+    NFTMarketplaceContext
+  );
+  const router = useRouter();
   const followerArray = [
     {
       background: images.creatorbackground1,
@@ -49,31 +54,84 @@ const author = () => {
 
   const [collectiables, setCollectiables] = useState(true);
   const [created, setCreated] = useState(false);
-  const [like, setLike] = useState(false);
-  const [follower, setFollower] = useState(false);
-  const [following, setFollowing] = useState(false);
-
-  const { fetchMyNFTsOrListedNFTs, currentAccount } = useContext(
-    NFTMarketplaceContext
-  );
-
+  const [auction, setAuction] = useState(false);
+  const [endAuction, setEndAuction] = useState(false);
+  const [endAuctions,setEndAuctions] = useState(false);
   const [nfts, setNfts] = useState([]);
   const [myNFTs, setMyNFTs] = useState([]);
-
+  const [auctions, setAuctions] = useState([]);
 
   useEffect(() => {
-    fetchMyNFTsOrListedNFTs("fetchItemsListed").then((items) => {
-      const finalItems = [];
+    if (!router.isReady) return;
+  }, [router.isReady]);
+
+  useEffect(() => {
+    fetchAuction(true).then((items) => {
+      if(router.query.seller){
+        items = items.filter((item) => item.auctioneer.toLocaleLowerCase() == router.query.seller);
+      }else{
+        items = items.filter((item) => item.auctioneer.toLocaleLowerCase() == currentAccount);
+      }
+     
+      
+      setAuctions(items);
+    })
+  },[router.query.seller,auction]);
+
+  useEffect(() => {
+    
+    fetchAuction(false).then((items) => {
+      console.log(items);
+      if(router.query.seller){
+        items = items.filter((item) => item.auctioneer.toLocaleLowerCase() == router.query.seller);
+      }else{
+        items = items.filter((item) => item.auctioneer.toLocaleLowerCase() == currentAccount);
+      }
+      setEndAuctions(items);
+      console.log(items);
+    })
+  },[router.query.seller,endAuction ]);
+
+  useEffect(() => {
+    fetchMyNFTsOrListedNFTs("fetchItemsListed", router.query.seller || currentAccount).then(
+      (items) => {
+        if (items) {
+          const finalItems = [];
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].breed != 1) {
+              items[i].count = 1;
+              items[i].tokenIds = [];
+              items[i].tokenIds.push(items[i].tokenId);
+              for (let j = i + 1; j < items.length; j++) {
+                if (items[j].breed == items[i].breed) {
+                  items[i].count++;
+                  items[i].tokenIds.push(items[j].tokenId);
+                  items.splice(j, 1);
+                  j--;
+                }
+              }
+            }
+            finalItems.push(items[i]);
+          }
+          setNfts(finalItems);
+        }
+      }
+    );
+  }, [router.query.seller,collectiables]);
+
+  useEffect(() => {
+    fetchMyNFTsOrListedNFTs("fetchMyNFTs", router.query.seller || currentAccount).then((items) => {
+      if (items) {
+        const finalItems = [];
         for (let i = 0; i < items.length; i++) {
           if (items[i].breed != 1) {
             items[i].count = 1;
             items[i].tokenIds = [];
-            items[i].tokenIds.push(items[i].tokenId)
+            items[i].tokenIds.push(items[i].tokenId);
             for (let j = i + 1; j < items.length; j++) {
-
               if (items[j].breed == items[i].breed) {
                 items[i].count++;
-                items[i].tokenIds.push(items[j].tokenId)
+                items[i].tokenIds.push(items[j].tokenId);
                 items.splice(j, 1);
                 j--;
               }
@@ -81,63 +139,40 @@ const author = () => {
           }
           finalItems.push(items[i]);
         }
-      setNfts(finalItems);
+        setMyNFTs(finalItems);
+      }
     });
-  }, [collectiables]);
-
-  useEffect(() => {
-    fetchMyNFTsOrListedNFTs("fetchMyNFTs").then((items) => {
-      const finalItems = [];
-        for (let i = 0; i < items.length; i++) {
-          if (items[i].breed != 1) {
-            items[i].count = 1;
-            items[i].tokenIds = [];
-            items[i].tokenIds.push(items[i].tokenId)
-            for (let j = i + 1; j < items.length; j++) {
-
-              if (items[j].breed == items[i].breed) {
-                items[i].count++;
-                items[i].tokenIds.push(items[j].tokenId)
-                items.splice(j, 1);
-                j--;
-              }
-            }
-          }
-          finalItems.push(items[i]);
-        }
-      setMyNFTs(finalItems);
-    });
-  }, [created]);
+  }, [router.query.seller,created]);
 
   return (
     <div className={Style.author}>
       <Banner bannerImage={images.creatorbackground2} />
-      <AuthorProfileCard currentAccount={currentAccount} />
+      <AuthorProfileCard currentAccount={router.query.seller || currentAccount} />
       <AuthorTaps
         setCollectiables={setCollectiables}
         setCreated={setCreated}
-        setLike={setLike}
-        setFollower={setFollower}
-        setFollowing={setFollowing}
+        setAuction={setAuction}
+        setEndAuction={setEndAuction}
       />
       <AuthorNFTCardBox
         collectiables={collectiables}
         created={created}
-        like={like}
-        follower={follower}
-        following={following}
         nfts={nfts}
         myNFTS={myNFTs}
+        auctions={auctions}
+        auction={auction}
+        endAuction={endAuction}
+        endAuctions={endAuctions}
       />
-      <Title
+      {/* <Title
         heading="Popular Creators"
         paragraph="Click on music icon and enjoy NTF music or audio"
-      />
-      <div className={Style.author_box}>
+      /> */}
+      {/* <div className={Style.author_box}>
         {followerArray.map((el, i) => (
           <FollowerTabCard i={i} el={el} />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

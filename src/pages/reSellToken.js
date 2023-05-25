@@ -19,6 +19,7 @@ const reSellToken = () => {
   const [price, setPrice] = useState('"');
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [limit, setLimit] = useState(1);
   const router = useRouter();
   const [count, setCount] = useState(1);
   const [tkIds, setTkIds] = useState([]);
@@ -71,6 +72,7 @@ const reSellToken = () => {
         let body = JSON.stringify({
           time: name + time.toString(),
           ids: item,
+          limit: limit,
         });
         let req = {
           url: "http://localhost:5000/api/v1/products/changeBreed",
@@ -116,6 +118,16 @@ const reSellToken = () => {
             className={formStyle.Form_box_input_userName}
             onChange={(e) => setQuantity(e.target.value)}
           />
+          <label htmlFor="limit">
+            Giới hạn mua
+          </label>
+          <input
+            type="number"
+            min={1}
+            value={quantity}
+            className={formStyle.Form_box_input_userName}
+            onChange={(e) => setLimit(e.target.value)}
+          />
         </div>
 
         <div className={Style.reSellToken_box_image}>
@@ -125,7 +137,7 @@ const reSellToken = () => {
         </div>
 
         <div className={Style.reSellToken_box_btn}>
-          <Button btnName="Resell NFT" handleClick={() => resell()} />
+          <Button btnName="Bán lại" handleClick={() => resell()} />
         </div>
       </div>
     </div>

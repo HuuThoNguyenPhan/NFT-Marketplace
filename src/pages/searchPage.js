@@ -2,54 +2,63 @@ import React, { useEffect, useState, useContext } from "react";
 
 //INTRNAL IMPORT
 import Style from "../styles/searchPage.module.css";
-import { Slider, Loader, AudioLive } from "../components/componentsindex";
+import {
+  Slider,
+  Loader,
+  AudioLive,
+  NFTCard,
+} from "../components/componentsindex";
 import { SearchBar } from "../components/SearchPage/searchBarIndex";
 import { Filter } from "../components/componentsindex";
 
-import {
-  NFTCardTwo,
-  Banner,
-} from "../components/collectionPage/collectionIndex";
+import { Banner } from "../components/collectionPage/collectionIndex";
 import images from "../assets/img";
 
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const searchPage = () => {
-  const { fetchNFTs, setError, currentAccount } = useContext(
+  const { fetchNFTs, setError, currentAccount, fetchAuction } = useContext(
     NFTMarketplaceContext
   );
-
+  const [nft, setNft] = useState(true);
   const [nfts, setNfts] = useState([]);
+  const [auctions, setAuctions] = useState([]);
   const [nftsCopy, setNftsCopy] = useState([]);
 
   useEffect(() => {
     try {
       fetchNFTs().then((items) => {
-        const finalItems = [];
-        for (let i = 0; i < items.length; i++) {
-          if (items[i].breed != 1) {
-            items[i].count = 1;
-            items[i].tokenIds = [];
-            items[i].tokenIds.push(items[i].tokenId)
-            for (let j = i + 1; j < items.length; j++) {
-
-              if (items[j].breed == items[i].breed) {
-                items[i].count++;
-                items[i].tokenIds.push(items[j].tokenId)
-                items.splice(j, 1);
-                j--;
+        if (items) {
+          const finalItems = [];
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].breed != 1) {
+              items[i].count = 1;
+              items[i].tokenIds = [];
+              items[i].tokenIds.push(items[i].tokenId);
+              for (let j = i + 1; j < items.length; j++) {
+                if (items[j].breed == items[i].breed) {
+                  items[i].count++;
+                  items[i].tokenIds.push(items[j].tokenId);
+                  items.splice(j, 1);
+                  j--;
+                }
               }
             }
+            finalItems.push(items[i]);
           }
-          finalItems.push(items[i]);
+
+          setNfts(finalItems.reverse());
+          setNftsCopy(finalItems);
         }
-        
-        setNfts(finalItems.reverse());
-        setNftsCopy(finalItems);
       });
     } catch (error) {
       setError("Hãy tải lại trình duyệt", error);
     }
+
+    fetchAuction(true).then((items) => {
+      setAuctions(items);
+      console.log(items);
+    });
   }, []);
 
   const onHandleSearch = (value) => {
@@ -114,11 +123,19 @@ const searchPage = () => {
         onHandleSearch={onHandleSearch}
         onClearSearch={onClearSearch}
       />
-
-      <Filter onHandleFilter={onHandleFilter} />
-      {nfts.length == 0 ? <Loader /> : <NFTCardTwo NFTData={nfts} />}
-      <Slider />
-      <AudioLive />
+      <div>{nft}</div>
+      <Filter setNft={setNft} onHandleFilter={onHandleFilter} />
+      {nft ? (
+        nfts.length == 0 ? (
+          <Loader />
+        ) : (
+          <NFTCard NFTData={nfts} />
+        )
+      ) : auctions.length == 0 ? (
+        <Loader />
+      ) : (
+        <NFTCard NFTData={auctions} />
+      )}
     </div>
   );
 };

@@ -24,4 +24,9 @@ module.exports = {
     //   ],
     // },
   },
+  plugins: [
+    // ...
+    "hardhat-deploy",
+    // ...
+  ],
 };

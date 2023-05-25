@@ -8,24 +8,14 @@ import images from "../assets/img";
 const aboutus = () => {
   const founderArray = [
     {
-      name: "Niamh O'Shea",
-      position: "Co-founder and Chief Executive",
+      name: "Nguyễn Phan Hữu Thọ",
+      position: "Thiết kế giao diện Web và Mobile App",
       images: images.founder1,
     },
     {
-      name: "Danien Jame",
-      position: "Co-founder and Chief Executive",
-      images: images.founder2,
-    },
-    {
-      name: "Orla Dwyer",
-      position: "Co-founder, Chairman",
+      name: "Nguyễn Ngọc Ý",
+      position: "Thiết kế xử lý toàn bộ dự án",
       images: images.founder3,
-    },
-    {
-      name: "Dara Frazier",
-      position: "Co-Founder, Chief Strategy Officer",
-      images: images.founder4,
     },
   ];
 
@@ -48,11 +38,14 @@ const aboutus = () => {
       <div className={Style.aboutus_box}>
         <div className={Style.aboutus_box_hero}>
           <div className={Style.aboutus_box_hero_left}>
-            <h1>👋 About Us.</h1>
+            <h1>👋 Về chúng tôi.</h1>
             <p>
-              We’re impartial and independent, and every day we create
-              distinctive, world-class programmes and content which inform,
-              educate and entertain millions of people in the around the world.
+              Là những sinh viên năm cuối, chúng tôi muốn làm gì đó thoát khỏi
+              vùng an toàn và tạo sự khác biệt. Dự án này mang lại nhiều kiến thức mới
+              mẻ, nhiều lúc gặp nhiều khó khăn dẫn đến bế tắc, mất phương hướng,
+              mất thời gian và mệt mỏi nhưng đổi lại được sự kiên nhẫn và quyết
+              tâm đi tiếp để thưởng thức được những phút giây cuối cùng của đời
+              sinh viên.
             </p>
           </div>
           <div className={Style.aboutus_box_hero_right}>
@@ -61,11 +54,8 @@ const aboutus = () => {
         </div>
 
         <div className={Style.aboutus_box_title}>
-          <h2>⛱ Founder</h2>
-          <p>
-            We’re impartial and independent, and every day we create
-            distinctive, world-class programmes and content
-          </p>
+          <h2>⛱ Người thực hiện</h2>
+
         </div>
 
         <div className={Style.aboutus_box_founder}>

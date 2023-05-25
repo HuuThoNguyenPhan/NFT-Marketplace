@@ -7,7 +7,6 @@ import { Button } from "../componentsindex";
 import images from "../../assets/img";
 
 const HeroSection = () => {
-  
   const router = useRouter();
   return (
     <div className={Style.heroSection}>
@@ -15,8 +14,8 @@ const HeroSection = () => {
         <div className={Style.heroSection_box_left}>
           <h1>Khám phá, sưu tập và bán sản phẩm NFT 🖼️</h1>
           <p>
-            Discover the most outstanding NTFs in all topics of life. Creative
-            your NTFs and sell them
+            Khám phá những NTF nổi bật nhất trong mọi chủ đề của cuộc sống. Sáng
+            tạo NTF của bạn và bán chúng
           </p>
           <Button
             btnName="Khám phá"

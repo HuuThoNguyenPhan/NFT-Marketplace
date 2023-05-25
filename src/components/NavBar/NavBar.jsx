@@ -29,12 +29,12 @@ const NavBar = () => {
 
   const openMenu = (e) => {
     const btnText = e.target.innerText;
-    if (btnText == "Discover") {
+    if (btnText == "Trang") {
       setDiscover(true);
       setHelp(false);
       setNotification(false);
       setProfile(false);
-    } else if (btnText == "Help Center") {
+    } else if (btnText == "Trợ giúp") {
       setDiscover(false);
       setHelp(true);
       setNotification(false);
@@ -104,7 +104,7 @@ const NavBar = () => {
           </div>
           <div className={Style.navbar_container_left_box_input}>
             <div className={Style.navbar_container_left_box_input_box}>
-              <input type="text" placeholder="Search NFT" />
+              <input type="text" placeholder="Tìm kiếm" />
               <BsSearch onClick={() => {}} className={Style.search_icon} />
             </div>
           </div>
@@ -114,7 +114,7 @@ const NavBar = () => {
         <div className={Style.navbar_container_right}>
           <div className={Style.navbar_container_right_discover}>
             {/* DISCOVER MENU */}
-            <p onClick={(e) => openMenu(e)}>Discover</p>
+            <p onClick={(e) => openMenu(e)}>Trang</p>
             {discover && (
               <div className={Style.navbar_container_right_discover_box}>
                 <Discover />
@@ -124,7 +124,7 @@ const NavBar = () => {
 
           {/* Trợ giúp */}
           <div className={Style.navbar_container_right_help}>
-            <p onClick={(e) => openMenu(e)}>Help Center</p>
+            <p onClick={(e) => openMenu(e)}>Trợ giúp</p>
             {help && (
               <div className={Style.navbar_container_right_help_box}>
                 <HelpCenter />

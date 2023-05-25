@@ -6,24 +6,12 @@ import Style from "./HelpCenter.module.css";
 const HelpCenter = () => {
   const helpCenter = [
     {
-      name: "About",
+      name: "Giới thiệu",
       link: "aboutus",
     },
     {
-      name: "Contact Us",
+      name: "Liên lạc",
       link: "contactus",
-    },
-    {
-      name: "Sign Up",
-      link: "signUp",
-    },
-    {
-      name: "LogIn",
-      link: "login",
-    },
-    {
-      name: "Subscription",
-      link: "subscription",
     },
     {
       name: "Chuyển tiền",
