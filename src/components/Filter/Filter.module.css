@@ -1,6 +1,6 @@
 
 .filter{
-    padding: 4rem 0;
+    padding: 0;
     width: 100%;
 }
 
@@ -20,8 +20,6 @@
 }
 
 .filter_box_left button{
-    border: none;
-    outline: none;
     padding: 1rem 1.5rem;
     border-radius: 2rem;
     border:  1px solid var(--main-bg-color);
@@ -33,6 +31,12 @@
 }
 .filter_box_left button:hover{
     border:  1px solid var(--icons-color);
+    color: var(--icons-color);
+    box-shadow: var(--box-shadow);
+}
+
+.filter_box_left_active{
+    border:  1px solid var(--icons-color) !important;
     color: var(--icons-color);
     box-shadow: var(--box-shadow);
 }

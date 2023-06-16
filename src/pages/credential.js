@@ -10,16 +10,7 @@ const uploadNFT = () => {
         <div className={Style.uploadNFT_box_heading}>
           <h1>Xác thực người dùng</h1>
           <p>
-            You can set preferred display name, create your profile URL and
-            manage other personal settings.
-          </p>
-        </div>
-
-        <div className={Style.uploadNFT_box_title}>
-          <h2>Image, Video, Audio, or 3D Model</h2>
-          <p>
-            Các loại tệp hỗ trợ: JPG, PNG, GIF, SVG, MP4, WEBM, MP3, WAV, OGG,
-            GLB, GLTF. Kích thước tối đa: 25 MB
+            Xác thực sẽ lưu thông tin của bạn, tăng độ uy tín. Sau khi xác thực thành công tên của bạn được đính kèm tích xanh
           </p>
         </div>
 

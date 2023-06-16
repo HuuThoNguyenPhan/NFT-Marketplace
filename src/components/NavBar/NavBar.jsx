@@ -1,19 +1,17 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import Image from "next/image";
 import { DiJqueryLogo } from "react-icons/di";
-
-import { MdNotifications } from "react-icons/md";
 import { BsSearch } from "react-icons/bs";
 import { CgMenuRight } from "react-icons/cg";
 
 import { useRouter } from "next/router";
 
 import Style from "./NavBar.module.css";
-import { Discover, HelpCenter, Notification, Profile, SideBar } from "./index";
+import { Discover, HelpCenter, Profile, SideBar, Cart } from "./index";
 import { Button, Error } from "../componentsindex";
 import images from "../../assets/img";
 import jazzicon from "@metamask/jazzicon";
-
+import { FaShoppingCart } from "react-icons/fa";
 import { NFTMarketplaceContext } from "../../../Context/NFTMarketplaceContext";
 
 const NavBar = () => {
@@ -21,6 +19,7 @@ const NavBar = () => {
   const [help, setHelp] = useState(false);
   const [notification, setNotification] = useState(false);
   const [profile, setProfile] = useState(false);
+  const [openCart, setopenCart] = useState(false);
   const [openSideMenu, setOpenSideMenu] = useState(false);
 
   const router = useRouter();
@@ -49,17 +48,19 @@ const NavBar = () => {
 
   const openNotification = () => {
     if (!notification) {
+      document.querySelector("body").style.overflow = "hidden";
       setNotification(true);
       setDiscover(false);
       setHelp(false);
       setProfile(false);
     } else {
       setNotification(false);
+      document.querySelector("body").style.overflow = "";
     }
   };
 
   const openProfile = () => {
-    console.log(profile)
+    console.log(profile);
     if (!profile) {
       setProfile(true);
       setHelp(false);
@@ -78,16 +79,47 @@ const NavBar = () => {
     }
   };
 
-  const { currentAccount, connectWallet, openError } = useContext(
-    NFTMarketplaceContext
-  );
+  const handleToggle = () => {
+    setopenCart(true);
+    setProfile(false);
+  };
+
+  useEffect(() => {
+    const handleClick = () => {
+      const navbar = document.querySelector(".NavBar_navbar__tQ7C9");
+      if (!navbar.contains(event.target)) {
+        setDiscover(false);
+        setHelp(false);
+        setNotification(false);
+        setProfile(false);
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+  }, []);
+
+  const {
+    currentAccount,
+    connectWallet,
+    openError,
+    fetchUserCart,
+    deleteFromCart,
+    cart,
+    setCart,
+    deleteAllCart,
+    buyNFT,
+  } = useContext(NFTMarketplaceContext);
 
   useEffect(() => {
     const element = avatarRef.current;
     if (element && currentAccount) {
       const addr = currentAccount.slice(2, 10);
       const seed = parseInt(addr, 16);
-      const icon = jazzicon(45, seed); 
+      const icon = jazzicon(45, seed);
       if (element.firstChild) {
         element.removeChild(element.firstChild);
       }
@@ -132,15 +164,6 @@ const NavBar = () => {
             )}
           </div>
 
-          {/* Thông báo */}
-          <div className={Style.navbar_container_right_notify}>
-            <MdNotifications
-              className={Style.notify}
-              onClick={() => openNotification()}
-            />
-            {notification && <Notification />}
-          </div>
-
           {/* Nút Tạo */}
           <div className={Style.navbar_container_right_button}>
             {currentAccount == "" ? (
@@ -158,7 +181,6 @@ const NavBar = () => {
             )}
           </div>
           {/* Hồ sơ người dùng */}
-
           <div className={Style.navbar_container_right_profile_box}>
             <div className={Style.navbar_container_right_profile}>
               {currentAccount == "" ? (
@@ -173,7 +195,12 @@ const NavBar = () => {
                 <div ref={avatarRef} onClick={() => openProfile()}></div>
               )}
 
-              {profile && <Profile currentAccount={currentAccount} />}
+              {profile && (
+                <Profile
+                  openCart={handleToggle}
+                  currentAccount={currentAccount}
+                />
+              )}
             </div>
           </div>
 
@@ -183,6 +210,24 @@ const NavBar = () => {
               className={Style.menuIcon}
               onClick={() => openSideBar()}
             />
+          </div>
+
+          {/* Giỏ hàng */}
+          <div className={Style.navbar_container_right_notify}>
+            <FaShoppingCart
+              className={Style.notify}
+              onClick={() => openNotification()}
+            />
+            <Cart
+              isOpen={notification}
+              fetchUserCart={fetchUserCart}
+              deleteFromCart={deleteFromCart}
+              cart={cart}
+              setCart={setCart}
+              deleteAllCart={deleteAllCart}
+              buyNFT={buyNFT}
+            />
+            {notification && <div className={Style.overlay} onClick={() => openNotification()}></div>}
           </div>
         </div>
       </div>

@@ -58,7 +58,7 @@ const NFTDetailsImg = ({ nft }) => {
         break;
       case "video":
         return (
-          <video width="200" height="150" controls style={{ margin: "0 auto" }}>
+          <video width="100%" height="100%" controls style={{ margin: "0 auto" }}>
             <source src={fileUrl} type="video/mp4" />
           </video>
         );
@@ -119,7 +119,7 @@ const NFTDetailsImg = ({ nft }) => {
 
         {description && (
           <div className={Style.NFTDetailsImg_box_description_box}>
-            <p>{nft.description}</p>
+            <p align="justify" >{nft.description}</p>
           </div>
         )}
 

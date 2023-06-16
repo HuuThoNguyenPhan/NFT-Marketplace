@@ -17,6 +17,7 @@
     "ether": "^0.0.9",
     "framer-motion": "^7.2.1",
     "ipfs-http-client": "^58.0.0",
+    "jsmediatags": "^3.9.7",
     "moralis": "^2.16.1",
     "next": "12.2.5",
     "react": "18.2.0",

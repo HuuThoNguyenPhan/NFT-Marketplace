@@ -2,13 +2,12 @@
 .AuthorProfileCard{
     width: 100%;
     z-index: 22222;
-    margin-top: 5rem;
+    margin-top: 2rem;
 }
 
 .AuthorProfileCard_box{
     width: 80%;
     margin:  0 auto;
-
     display: grid;
     grid-template-columns: 1fr 4fr 1.3fr;
     align-items: center;
@@ -89,6 +88,11 @@
     align-self: start;
     gap: 2rem;
     position: relative;
+}
+
+.AuthorProfileCard_box_share button{
+    white-space: nowrap;
+    text-align: center;
 }
 
 .AuthorProfileCard_box_share_icon{

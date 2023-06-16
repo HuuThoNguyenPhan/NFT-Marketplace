@@ -4,12 +4,12 @@ import React from "react";
 import { NFTDescription, NFTDetailsImg, } from "./NFTDetailsIndex";
 import Style from "./NFTDetailsPage.module.css";
 
-const NFTDetailsPage = ({ nft }) => {
+const NFTDetailsPage = ({ nft, lastBid, lastBidder }) => {
   return (
     <div className={Style.NFTDetailsPage}>
       <div className={Style.NFTDetailsPage_box}>
         <NFTDetailsImg nft={nft} />
-        <NFTDescription nft={nft}/>
+        <NFTDescription lastBid={lastBid} lastBidder={lastBidder} nft={nft}/>
       </div>
     </div>
   );

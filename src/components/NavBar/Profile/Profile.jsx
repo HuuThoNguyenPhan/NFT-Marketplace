@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from "react";
-import { FaUserAlt, FaRegImage } from "react-icons/fa";
+import { FaUserAlt,FaShoppingCart } from "react-icons/fa";
 import Link from "next/link";
 
 import Style from "./Profile.module.css";
 import jazzicon from "@metamask/jazzicon";
 
-const Profile = ({ currentAccount }) => {
+const Profile = ({ currentAccount, openCart }) => {
   const avatarRef = useRef();
   useEffect(() => {
     const element = avatarRef.current;
@@ -18,7 +18,6 @@ const Profile = ({ currentAccount }) => {
       }
       element.appendChild(icon);
     }
-   
   }, [currentAccount, avatarRef]);
   return (
     <div className={Style.profile}>
@@ -33,12 +32,12 @@ const Profile = ({ currentAccount }) => {
 
       <div className={Style.profile_menu}>
         <div className={Style.profile_menu_one}>
-          <div className={Style.profile_menu_one_item}>
-            <FaUserAlt />
-            <p>
-              <Link href={{ pathname: "/author" }}>Hồ sơ </Link>
-            </p>
-          </div>
+          <Link href={{ pathname: "/author" }}>
+            <div className={Style.profile_menu_one_item}>
+              <FaUserAlt />
+              <p>Hồ sơ</p>
+            </div>
+          </Link>
         </div>
       </div>
     </div>

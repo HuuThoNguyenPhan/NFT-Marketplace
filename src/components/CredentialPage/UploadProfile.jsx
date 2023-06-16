@@ -30,33 +30,7 @@ const UploadProfile = () => {
     <div className={Style.upload}>
       <div className={Style.dropZone}>
         <DropZone
-          title="Ảnh đại diện"
-          heading="Kéo và thả tệp"
-          subHeading="hoặc tải tệp lên từ thiết bị của bạn"
-          name={name}
-          website={website}
-          description={description}
-          country={country}
-          setFileSize={setFileSize}
-          setImage={setImage}
-          fileSize={fileSize}
-          image={image}
-        />
-        <DropZone
-          title="Ảnh mặt trước của CCCD"
-          heading="Kéo và thả tệp"
-          subHeading="hoặc tải tệp lên từ thiết bị của bạn"
-          name={name}
-          website={website}
-          description={description}
-          country={country}
-          setFileSize={setFileSize}
-          setImage={setImage}
-          fileSize={fileSize}
-          image={image}
-        />
-        <DropZone
-          title="Ảnh mặt sau của CCCD"
+          title="Ảnh đại diện: JPG, PNG"
           heading="Kéo và thả tệp"
           subHeading="hoặc tải tệp lên từ thiết bị của bạn"
           name={name}
@@ -75,32 +49,13 @@ const UploadProfile = () => {
           <label htmlFor="name">Tên người dùng</label>
           <input
             type="text"
-            placeholder="Nguyễn Ngọc Ý"
+            placeholder="Ví dụ: Nguyễn Ngọc Ý"
             className={formStyle.Form_box_input_userName}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
 
-        <div className={formStyle.Form_box_input}>
-          <label htmlFor="website">Website</label>
-          <div className={formStyle.Form_box_input_box}>
-            <div className={formStyle.Form_box_input_box_icon}>
-              <MdOutlineHttp />
-            </div>
-
-            <input
-              type="text"
-              placeholder="website"
-              onChange={(e) => setWebsite(e.target.value)}
-            />
-          </div>
-
-          <p className={Style.upload_box_input_para}>
-            Ciscrypt will include a link to this URL on this item's detail page,
-            so that users can click to learn more about it. You are welcome to
-            link to your own webpage with more details.
-          </p>
-        </div>
+        
 
         <div className={formStyle.Form_box_input}>
           <label htmlFor="description">Mô tả</label>
@@ -109,7 +64,7 @@ const UploadProfile = () => {
             id=""
             cols="30"
             rows="6"
-            placeholder="Hãy miêu tả sản phẩm một ít ..."
+            placeholder="Hãy miêu tả về bản thân ..."
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
         </div>
@@ -120,7 +75,7 @@ const UploadProfile = () => {
             id=""
             cols="30"
             rows="6"
-            placeholder="Hãy miêu tả sản phẩm một ít ..."
+            placeholder="Lý do của bạn ..."
             onChange={(e) => setReason(e.target.value)}
           ></textarea>
         </div>

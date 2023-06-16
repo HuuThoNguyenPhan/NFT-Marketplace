@@ -87,13 +87,6 @@ const NFTCard = ({ NFTData }) => {
                       <small>Giá hiện tại</small>
                       <p>{el.price} ETH</p>
                     </div>
-                    <div
-                      className={
-                        Style.NFTCard_box_update_details_price_box_stock
-                      }
-                    >
-                      <small>{el.limit} trong kho</small>
-                    </div>
                   </div>
                 </div>
               </div>

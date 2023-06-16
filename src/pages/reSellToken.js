@@ -58,13 +58,17 @@ const reSellToken = () => {
         return;
       }
       const ids = [];
-      for (let i = 0; i < quantity; i++) {
-        ids.push(parseInt(tkIds[0][i]));
-        
+
+      if (tkIds.length > 1) {
+        for (let i = 0; i < quantity; i++) {
+          ids.push(parseInt(tkIds[0][i]));
+        }
+      } else {
+        ids = [parseInt(tkIds[0])];
       }
       console.log(ids);
       fetchTokenURI(ids).then(async (item) => {
-        const time = name + new Date().getTime()
+        const time = name + new Date().getTime();
         let header = {
           Accept: "*/*",
           "Content-Type": "application/json",
@@ -96,49 +100,51 @@ const reSellToken = () => {
   return (
     <div className={Style.reSellToken}>
       <div className={Style.reSellToken_box}>
-        <h1>ReSell Your Token, Set Price</h1>
-        <div className={formStyle.Form_box_input}>
-          <label htmlFor="name">Giá</label>
-          <input
-            style={{ marginBottom: 2 + "rem" }}
-            type="number"
-            min={1}
-            placeholder="Đặt lại giá"
-            value={price}
-            className={formStyle.Form_box_input_userName}
-            onChange={(e) => setPrice(e.target.value)}
-          />
-          <label htmlFor="name">
-            Số lượng (còn {count || 1} trong kho) {tkIds}
-          </label>
-          <input
-            type="number"
-            min={1}
-            value={quantity}
-            className={formStyle.Form_box_input_userName}
-            onChange={(e) => setQuantity(e.target.value)}
-          />
-          <label htmlFor="limit">
-            Giới hạn mua
-          </label>
-          <input
-            type="number"
-            min={1}
-            value={quantity}
-            className={formStyle.Form_box_input_userName}
-            onChange={(e) => setLimit(e.target.value)}
-          />
-        </div>
-
+        <h1>Bán lại sản phẩm của bạn, Đặt lại giá</h1>
         <div className={Style.reSellToken_box_image}>
           {image && (
             <Image src={image} alt="resell nft" width={700} height={400} />
           )}
         </div>
-
-        <div className={Style.reSellToken_box_btn}>
-          <Button btnName="Bán lại" handleClick={() => resell()} />
+        <div
+          className={Style.form_resell}
+        >
+          <div>
+            <label htmlFor="name">Số lượng (còn {count || 1})</label>
+            <input
+              type="number"
+              min={1}
+              value={quantity}
+              className={formStyle.Form_box_input_userName}
+              onChange={(e) => setQuantity(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="limit">Giới hạn mua</label>
+            <input
+              type="number"
+              min={1}
+              value={quantity}
+              className={formStyle.Form_box_input_userName}
+              onChange={(e) => setLimit(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="name">Giá</label>
+            <input
+              type="number"
+              min={1}
+              value={price}
+              className={formStyle.Form_box_input_userName}
+              onChange={(e) => setPrice(e.target.value)}
+            />
+          </div>
         </div>
+        <Button
+          classStyle={Style.button}
+          btnName="Bán lại"
+          handleClick={() => resell()}
+        />
       </div>
     </div>
   );

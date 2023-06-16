@@ -25,8 +25,32 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "not_verified",
   },
-
   image: { type: Array },
+  cart: [
+    {
+      tokenId: {
+        type: String,
+      },
+      name: {
+        type: String,
+      },
+      image: {
+        type: String,
+      },
+      price: {
+        type: Number,
+      },
+      typeFile:{
+        type: String,
+      },
+      royalties: {
+        type: String,
+      }, 
+      author: {
+        type: String,
+      }
+    },
+  ],
   country: { type: String },
   createdAt: {
     type: Date,

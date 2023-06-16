@@ -6,7 +6,7 @@ import axios from "axios";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 
 const JWT =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIyYWU1MDFhYi02OGE3LTQzYjMtYWM2NS04ZDNjNWIxYTQ2NzkiLCJlbWFpbCI6ImRldi5odXV0aG9AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjkyMTQwNmFlOTc5YzJjOWM3OTczIiwic2NvcGVkS2V5U2VjcmV0IjoiMzQyMmJmMzM0NGI1YjVkMDk2MmM2N2U0NjIxMTcwZmY1NzFkYTA3ZmU1MDU0YzNiNmFlODBjNGJmNjgxMjljYyIsImlhdCI6MTY4MTM3MTMzM30.KEvJUpkaL1SQcv8YonaMXplrKWJw82yQRF9FUKT7WM0";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIxMDQ1MDQyYy03Y2FlLTQzZGMtYTliZS0wMDNmMmVjZDYzNDYiLCJlbWFpbCI6InRob3BybzIwMDFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImIzZDgxOWEwYWZmMzY3ODczNTdhIiwic2NvcGVkS2V5U2VjcmV0IjoiMmZhNmEzYmI1YTcxZGI5MGQwNTU1Y2FkMzA5MTFmNTBlOGQ3ZjNjM2I2Nzk2MjMxZDYxMzk3ZmFhMTBlZDhiYyIsImlhdCI6MTY4NjAyNDYyM30.gsBxgDSiUnCHFu8V107YzzO5NgeyJ3Yz4qITTkc_Hsg";
 const subdomain = "your subdomain";
 
 import {
@@ -38,7 +38,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [idAccount, setIdAccount] = useState("");
   const [accountBalance, setAccountBalance] = useState("");
-
+  const [cart, setCart] = useState([]);
   const router = useRouter();
 
   const credential = async (
@@ -139,11 +139,32 @@ export const NFTMarketplaceProvider = ({ children }) => {
       style: "currency",
       currency: "VND",
     });
-    const finalPrice = VND.format(res2.data.new_amount).replace("₫", "VNĐ");
+    let finalPrice = "";
+    if(res2.data.new_amount.toString().length > 15){
+      finalPrice = formatPrice(res2.data.new_amount,15) + " VNĐ";
+    }else{
+      finalPrice = VND.format(res2.data.new_amount).replace("₫", "VNĐ");
+    }
+    
 
-    return finalPrice;
+    return formatPrice(finalPrice,10);
   };
 
+  function formatPrice(price,length) {
+    if (price.toString().length > length) {
+      if (price >= 1000000000) {
+        return (price / 1000000000).toFixed(3) + "B";
+      } else if (price >= 1000000) {
+        return (price / 1000000).toFixed(3) + "M";
+      } else if (price >= 1000) {
+        return (price / 1000).toFixed(3) + "K";
+      } else {
+        return price;
+      }
+    } else {
+      return price;
+    }
+  }
   // useEffect(() => {
   //   // window.addEventListener("beforeunload", (event) => {
   //   //   event.preventDefault();
@@ -177,8 +198,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
             address: accounts[0],
           }
         );
-        console.log(res);
         setIdAccount(res.data.user._id);
+        const carts = await fetchUserCart(accounts[0]);
+        setCart(carts);
       }
 
       // localStorage.setItem("myAccount", "exist");
@@ -199,7 +221,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
     description,
     breed,
     limit,
-    genealogy
+    genealogy,
+    topics,
+    quantity
   ) => {
     const formData = new FormData();
 
@@ -236,14 +260,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
       var data = JSON.stringify({
         Metadata: {
           name: name,
-          descreption: description,
+          description: description,
           image: IpfsHash,
           typeFile: selectedFile.type.slice(0, selectedFile.type.indexOf("/")),
-          size: (selectedFile.size / 1048576).toFixed(2),
-          // categories: categories,
+          size: (selectedFile.size / 1048576).toFixed(4),
+          topics: topics,
           genealogy: genealogy,
           breed: breed,
           limit: limit,
+          only: quantity > 1 ? false : true,
         },
       });
 
@@ -256,6 +281,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         data: data,
       };
       const resMetadata = await axios(config);
+      console.log(resMetadata);
       // return "https://gateway.pinata.cloud/ipfs/" + resMetadata.data.IpfsHash;
 
       return `http://localhost:5000/api/v1/products/${resMetadata.data.metaData._id}`;
@@ -266,20 +292,38 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const fetchTopics = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/v1/topics");
+      return res.data.topics;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   //---CREATENFT FUNCTION
   const createNFT = async (
     name,
     price,
     image,
     description,
-    router,
     quantity,
     limit,
     isAuction,
-    royalties
+    royalties,
+    topics
   ) => {
-    if (!name || !description || !price || !image || !quantity || !limit)
-      return setError("Thiếu dữ liệu"), setOpenError(true);
+    isAuction = isAuction == 0 ? false : true;
+    if (
+      !name ||
+      !description ||
+      !price ||
+      !image ||
+      !quantity ||
+      !limit ||
+      !royalties ||
+      !topics
+    )
+      return setError("Bạn chưa nhập đủ thông tin"), setOpenError(true);
 
     const sleep = (ms) => {
       return new Promise((resolve) => setTimeout(resolve, ms));
@@ -288,7 +332,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     try {
       const urls = [];
 
-      const breed = quantity > 1 ? name + new Date().getTime() : 1;
+      const breed = name + new Date().getTime();
       const genealogy = "genealogy" + name + new Date().getTime();
       for (let i = 0; i < quantity; i++) {
         let url = await uploadToIPFS(
@@ -297,14 +341,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
           description,
           breed,
           limit,
-          genealogy
+          genealogy,
+          topics,
+          quantity
         );
         urls.push(url);
-        await sleep(2000);
+        await sleep(1000);
       }
 
       await createSale(urls, price, quantity, false, [], isAuction, royalties);
-      router.push("/searchPage");
     } catch (error) {
       console.log(error);
       setError("Lỗi khi tạo sản phẩm NFT");
@@ -338,21 +383,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
           });
 
       await transaction.wait();
-      console.log(transaction);
+      router.push("/searchPage");
     } catch (error) {
-      setError("error while creating sale");
+      setError("Bạn đã hủy đăng sản phẩm");
       setOpenError(true);
       console.log(error);
     }
   };
 
-  const createAuction = async (
-    tokenId,
-    initialPrice,
-    startTime,
-    endTime,
-    name
-  ) => {
+  const createAuction = async (tokenId, initialPrice, startTime, endTime) => {
     try {
       const price = ethers.utils.parseEther(initialPrice.toString());
       const provider = new ethers.providers.JsonRpcProvider();
@@ -369,25 +408,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         rawEndTime
         // {value : listingPrice.toString()}
       );
-
-      const item = await fetchTokenURI([tokenId]);
-      let header = {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      };
-      let body = JSON.stringify({
-        time: name + new Date().getTime().toString(),
-        ids: [item[0]],
-      });
-      let req = {
-        url: "http://localhost:5000/api/v1/products/changeBreed",
-        method: "POST",
-        headers: header,
-        data: body,
-      };
-
       await transaction.wait();
-      await axios.request(req);
       router.push("/searchPage");
     } catch (error) {
       setError("Lỗi khi tạo đấu giá");
@@ -396,14 +417,37 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const cancleAuction = async (auctionId, type) => {
+  const cancleAuction = async (auctionId, type, tokenId, name) => {
     try {
+      let req;
       const contract = await connectingWithSmartContract(fetchAuctionContract);
+      if (type == false) {
+        const item = await fetchTokenURI([tokenId]);
+        let header = {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+        };
+        let body = JSON.stringify({
+          time: name + new Date().getTime().toString(),
+          ids: [item[0]],
+        });
+        req = {
+          url: "http://localhost:5000/api/v1/products/changeBreed",
+          method: "POST",
+          headers: header,
+          data: body,
+        };
+      }
       const transaction =
         type == true
           ? await contract.cancleAuction(auctionId)
           : await contract.finishAuction(auctionId);
+
       await transaction.wait();
+      if (type == false) {
+        await axios.request(req);
+      }
+      window.location.reload();
     } catch (error) {
       setError("Lỗi khi hủy đấu giá");
       setOpenError(true);
@@ -411,20 +455,23 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const joinAuction = async (auctionId,bid) => {
+  const joinAuction = async (auctionId, bid) => {
     try {
       const price = ethers.utils.parseEther(bid.toString());
       const contract = await connectingWithSmartContract(fetchAuctionContract);
-      const transaction = await contract.joinAuction(auctionId,price,{value:price.toString()});
+      const transaction = await contract.joinAuction(auctionId, price, {
+        value: price.toString(),
+      });
       await transaction.wait();
     } catch (error) {
       setError("Lỗi khi tham gia đấu giá");
       setOpenError(true);
       console.log(error);
     }
-  }
+  };
 
   const fetchTokenURI = async (tokenIds) => {
+    console.log(tokenIds);
     if (typeof tokenIds == "string") {
       tokenIds = [tokenIds];
     }
@@ -442,6 +489,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
     return tokenURIs;
   };
 
+  const getContract = async () => {
+    const provider = new ethers.providers.JsonRpcProvider();
+    const contract = await fetchAuctionContract(provider);
+
+    return contract;
+  };
   const fetchDetailAuction = async (auc) => {
     try {
       const provider = new ethers.providers.JsonRpcProvider();
@@ -484,7 +537,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         var remaining = Math.floor(
           (endTime.toNumber() - new Date().getTime()) / 1000
         );
-
+        const { author, royalties } = await contract2.detailNFT(_tokenId);
         const metaData = res.data.products;
         const name = metaData.name;
         const description = metaData.descreption;
@@ -518,6 +571,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
           active,
           auctionId: auctionId.toNumber(),
           owner: "0",
+          author,
+          royalties: royalties.toNumber(),
         };
       }
     } catch (error) {
@@ -527,6 +582,117 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const fetchUserCart = async () => {
+    try {
+      const provider = new ethers.providers.JsonRpcProvider();
+      const contract2 = await fetchFactoryContract(provider);
+      const { data } = await axios.get(
+        `http://localhost:5000/api/v1/address/${currentAccount}`
+      );
+      const resCart = data.user.cart;
+      const final = await Promise.all(
+        resCart.map(async (element) => {
+          const nft = await contract2.detailNFT(element.tokenId);
+          if (nft.sold) element.price = "Đã bán";
+          return element;
+        })
+      );
+      return final;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const addToCart = async (
+    tokenId,
+    name,
+    image,
+    typeFile,
+    price,
+    royalties,
+    author
+  ) => {
+    try {
+      console.log(royalties);
+      let headersList = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+
+      let bodyContent = JSON.stringify({
+        addressWallet: currentAccount,
+        cart: {
+          name: name,
+          tokenId: tokenId,
+          image: image,
+          price: price,
+          typeFile: typeFile,
+          royalties: royalties,
+          author: author,
+        },
+      });
+      console.log(bodyContent);
+      let reqOptions = {
+        url: "http://localhost:5000/api/v1/addToCart",
+        method: "POST",
+        headers: headersList,
+        data: bodyContent,
+      };
+
+      let response = await axios.request(reqOptions);
+      if (response.status === 200) {
+        alert("Đã thêm vào giỏ hàng");
+      }
+      console.log(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const deleteFromCart = async (tokenId) => {
+    try {
+      let headersList = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      let bodyContent = JSON.stringify({
+        addressWallet: currentAccount,
+        tokenId: tokenId,
+      });
+      console.log(bodyContent);
+      let reqOptions = {
+        url: "http://localhost:5000/api/v1/deleteCart",
+        method: "POST",
+        headers: headersList,
+        data: bodyContent,
+      };
+      let response = await axios.request(reqOptions);
+      console.log(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const deleteAllCart = async () => {
+    try {
+      let headersList = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      let bodyContent = JSON.stringify({
+        addressWallet: currentAccount,
+      });
+      console.log(bodyContent);
+      let reqOptions = {
+        url: "http://localhost:5000/api/v1/deleteAllCart",
+        method: "POST",
+        headers: headersList,
+        data: bodyContent,
+      };
+      let response = await axios.request(reqOptions);
+      console.log(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const fetchAuction = async (active) => {
     try {
       const provider = new ethers.providers.JsonRpcProvider();
@@ -582,8 +748,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const image =
               "https://gateway.pinata.cloud/ipfs/" +
               metaData.image.slice(7, metaData.image.length);
-            const seller = 0;
-            const owner = 0;
             return {
               tokenId: _tokenId.toNumber(),
               image,
@@ -597,7 +761,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
               auctioneer,
               initPrice,
               previousBidder,
-              lastPrice,
+              price: lastPrice,
               lastBidder,
               startTime,
               endTime,
@@ -611,8 +775,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
       );
 
       return items;
-
-      // }
     } catch (error) {
       console.log(error);
       setError("Error while fetching NFTS");
@@ -675,10 +837,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
               unformattedPrice.toString(),
               "ether"
             );
-
             const metaData = res.data.products;
             const name = metaData.name;
-            const description = metaData.descreption;
+            const description = metaData.description;
             const typeFile = metaData.typeFile;
             const breed = metaData.breed;
             const size = metaData.size;
@@ -686,10 +847,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
             const image =
               "https://gateway.pinata.cloud/ipfs/" +
               metaData.image.slice(7, metaData.image.length);
-
+            const only = metaData.only;
+            const createAt = new Date(metaData.createAt).toLocaleDateString();
             return {
               price,
               tokenId: tokenId.toNumber(),
+              royalties: royalties.toNumber(),
               seller,
               owner,
               image,
@@ -700,16 +863,16 @@ export const NFTMarketplaceProvider = ({ children }) => {
               breed,
               size,
               limit,
-              royalties: royalties.toNumber(),
               author,
+              only,
+              createAt,
             };
           }
         )
       );
 
+      console.log(items);
       return items;
-
-      // }
     } catch (error) {
       console.log(error);
       setError("Error while fetching NFTS");
@@ -724,7 +887,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
   // }, []);
 
   //--Sở hữu
-  const fecthOwner = async (listTokenId) => {
+  const fetchOwner = async (listTokenId) => {
     try {
       if (currentAccount) {
         if (listTokenId.length == 1) {
@@ -745,7 +908,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   //--FETCHING MY NFT OR LISTED NFTs
   const fetchMyNFTsOrListedNFTs = async (type, address) => {
-    console.log(address);
     try {
       const contract = await connectingWithSmartContract(fetchContract);
 
@@ -758,7 +920,14 @@ export const NFTMarketplaceProvider = ({ children }) => {
       const contract2 = await fetchFactoryContract(provider);
       const items = await Promise.all(
         data.map(
-          async ({ tokenId, seller, owner, price: unformattedPrice }) => {
+          async ({
+            tokenId,
+            seller,
+            owner,
+            price: unformattedPrice,
+            royalties,
+            author,
+          }) => {
             const tokenURI = await contract2.tokenURI(tokenId);
             const id = tokenURI.slice(38, tokenURI.length);
             var config = {
@@ -773,7 +942,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
             const metaData = res.data.products;
             const name = metaData.name;
-            const description = metaData.descreption;
+            const description = metaData.description;
             const typeFile = metaData.typeFile;
             const size = metaData.size;
             const limit = metaData.limit;
@@ -786,6 +955,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
               "ether"
             );
             const breed = metaData.breed;
+            const createAt = new Date(metaData.createAt).toLocaleDateString();
             return {
               price,
               tokenId: tokenId.toNumber(),
@@ -799,11 +969,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
               breed,
               size,
               limit,
+              royalties: royalties.toNumber(),
+              author,
+              createAt
             };
           }
         )
       );
 
+      console.log(items);
       return items;
     } catch (error) {
       setError("Error while fetching listed NFTs");
@@ -816,15 +990,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
   // }, []);
 
   //---BUY NFTs FUNCTION
-  const buyNFT = async (nft, limit) => {
+  const buyNFT = async (nft, limit, cartLenght, deleteCart) => {
     try {
-      console.log(nft);
       const contract = await connectingWithSmartContract(fetchContract);
       const time = nft.name + new Date().getTime();
       nft.price = nft.price * limit;
-      console.log(nft.price);
       const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
-      console.log(price.toString());
       const finalItem = [];
       const item = await fetchTokenURI(nft.tokenIds);
       for (let i = 0; i < limit; i++) {
@@ -846,16 +1017,27 @@ export const NFTMarketplaceProvider = ({ children }) => {
       };
 
       const ids = [];
-      for (let i = 0; i < limit; i++) {
-        ids.push(parseInt(nft.tokenIds[i]));
+      if (typeof nft.tokenIds != "string") {
+        for (let i = 0; i < limit; i++) {
+          ids.push(parseInt(nft.tokenIds[i]));
+        }
+      } else {
+        ids = [parseInt(nft.tokenIds)];
       }
-
       const transaction = await contract.createMarketSale(ids, {
         value: price,
       });
 
       await transaction.wait();
       await axios.request(req);
+      if (deleteCart) {
+        deleteFromCart(nft.tokenId);
+        const newCart = await fetchUserCart();
+        setCart(newCart);
+      }
+      if (!cartLenght) {
+        router.push("/author");
+      }
       router.push("/author");
     } catch (error) {
       console.log(error);
@@ -864,6 +1046,54 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
+  const fetchContentReports = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/v1/getContentReports"
+      );
+      return res.data.content;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const sendReport = async (option, genealogy, closeReport) => {
+    try {
+      let headersList = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
+      let bodyContent = JSON.stringify({
+        addressWallet: currentAccount,
+        option: option,
+        genealogy: genealogy,
+      });
+      let reqOptions = {
+        url: "http://localhost:5000/api/v1/sendReport",
+        method: "POST",
+        headers: headersList,
+        data: bodyContent,
+      };
+      if (currentAccount) {
+        let response = await axios.request(reqOptions);
+        if (response.status == 200) {
+          if (response.data.success) {
+            alert(response.data.message);
+            closeReport;
+          } else {
+            alert(response.data.message);
+            closeReport;
+          }
+        }
+      } else {
+        setError("Kết nối ví để gửi tố cáo !");
+        setOpenError(true);
+        closeReport;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   //------------------------------------------------------------------
 
   //----TRANSFER FUNDS
@@ -975,6 +1205,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         fetchMyNFTsOrListedNFTs,
         buyNFT,
         createSale,
+        cart,
+        setCart,
         currentAccount,
         titleData,
         setOpenError,
@@ -987,7 +1219,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         accountBalance,
         transactionCount,
         transactions,
-        fecthOwner,
+        fetchOwner,
         changeCurrency,
         fetchTokenURI,
         credential,
@@ -995,7 +1227,16 @@ export const NFTMarketplaceProvider = ({ children }) => {
         fetchAuction,
         fetchDetailAuction,
         cancleAuction,
-        joinAuction
+        joinAuction,
+        getContract,
+        fetchTopics,
+        fetchUserCart,
+        addToCart,
+        deleteFromCart,
+        deleteAllCart,
+        fetchContentReports,
+        sendReport,
+        formatPrice
       }}
     >
       {children}

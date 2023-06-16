@@ -146,7 +146,6 @@ const author = () => {
 
   return (
     <div className={Style.author}>
-      <Banner bannerImage={images.creatorbackground2} />
       <AuthorProfileCard currentAccount={router.query.seller || currentAccount} />
       <AuthorTaps
         setCollectiables={setCollectiables}

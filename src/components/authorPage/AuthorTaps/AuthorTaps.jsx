@@ -36,13 +36,13 @@ const AuthorTaps = ({
   const openTab = (e) => {
     const btnText = e.target.innerText;
     console.log(btnText);
-    if (btnText == "NFTs đang bán") {
+    if (btnText == "NFT đang bán") {
       setCollectiables(true);
       setCreated(false);
       setAuction(false);
       setEndAuction(false);
       setActiveBtn(1);
-    } else if (btnText == "NFTs sở hữu") {
+    } else if (btnText == "NFT sở hữu") {
       setCollectiables(false);
       setCreated(true);
       setAuction(false);
@@ -87,13 +87,13 @@ const AuthorTaps = ({
               className={`${activeBtn == 1 ? Style.active : ""}`}
               onClick={(e) => openTab(e)}
             >
-              NFTs đang bán
+              NFT đang bán
             </button>
             <button
               className={`${activeBtn == 2 ? Style.active : ""}`}
               onClick={(e) => openTab(e)}
             >
-              NFTs sở hữu
+              NFT sở hữu
             </button>
             <button
               className={`${activeBtn == 3 ? Style.active : ""}`}

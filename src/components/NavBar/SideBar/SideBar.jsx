@@ -28,60 +28,40 @@ const SideBar = ({ setOpenSideMenu, currentAccount, connectWallet }) => {
   //--------DISCOVER NAVIGATION MENU
   const discover = [
     {
-      name: "Collection",
+      name: "Sản phẩm",
       link: "collection",
     },
     {
-      name: "Search",
+      name: "Tìm kiếm",
       link: "searchPage",
     },
     {
-      name: "Author Profile",
-      link: "author",
-    },
-    {
-      name: "NFT Details",
-      link: "NFT-details",
-    },
-    {
-      name: "Account Setting",
-      link: "account",
-    },
-    {
-      name: "Upload NFT",
+      name: "Tạo sản phẩm",
       link: "uploadNFT",
     },
     {
-      name: "Connect Wallet",
+      name: "Kết nối ví",
       link: "connectWallet",
-    },
-    {
-      name: "Blog",
-      link: "blog",
     },
   ];
   //------HELP CNTEER
   const helpCenter = [
     {
-      name: "About",
+      name: "Giới thiệu",
       link: "aboutus",
     },
     {
-      name: "Contact Us",
+      name: "Liên lạc",
       link: "contactus",
     },
     {
-      name: "Sign Up",
-      link: "signUp",
+      name: "Chuyển tiền",
+      link: "transferFunds"
     },
     {
-      name: "LogIn",
-      link: "login",
-    },
-    {
-      name: "Subscription",
-      link: "subscription",
-    },
+      name: "Xác thực người dùng",
+      link: "credential"
+    }
   ];
 
   const openDiscoverMenu = () => {
@@ -112,7 +92,6 @@ const SideBar = ({ setOpenSideMenu, currentAccount, connectWallet }) => {
       />
 
       <div className={Style.sideBar_box}>
-        {/* <Image src={images.logo} alt="logo" width={150} height={150} /> */}
         <p>
           <a href="/">
             <DiJqueryLogo className={Style.sideBar_box_logo} />
@@ -147,7 +126,7 @@ const SideBar = ({ setOpenSideMenu, currentAccount, connectWallet }) => {
             className={Style.sideBar_menu_box}
             onClick={() => openDiscoverMenu()}
           >
-            <p>Discover</p>
+            <p>Trang</p>
             <TiArrowSortedDown />
           </div>
 
@@ -167,7 +146,7 @@ const SideBar = ({ setOpenSideMenu, currentAccount, connectWallet }) => {
             className={Style.sideBar_menu_box}
             onClick={() => openHelpMenu()}
           >
-            <p>Help Center</p>
+            <p>Trợ giúp</p>
             <TiArrowSortedDown />
           </div>
 
@@ -185,15 +164,13 @@ const SideBar = ({ setOpenSideMenu, currentAccount, connectWallet }) => {
 
       <div className={Style.sideBar_button}>
         {currentAccount == "" ? (
-          <Button btnName="connect" handleClick={() => connectWallet()} />
+          <Button btnName="Kết nối ví" handleClick={() => connectWallet()} />
         ) : (
           <Button
-            btnName="Create"
+            btnName="Tạo mới"
             handleClick={() => router.push("/uploadNFT")}
           />
         )}
-
-        <Button btnName="Connect Wallet" handleClick={() => {}} />
       </div>
     </div>
   );

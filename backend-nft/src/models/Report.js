@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 
 const reportSchema = new mongoose.Schema({
-  idUser: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Users",
+  addressWallet: {
+    type: String,
   },
   genealogy: {
     type: String,

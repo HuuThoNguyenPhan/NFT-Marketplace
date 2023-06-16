@@ -23,8 +23,7 @@ const uploadNFT = () => {
         <div className={Style.uploadNFT_box_title}>
           <h2>Ảnh, Video, Tệp âm thanh, hoặc 3D </h2>
           <p>
-            Các loại tệp hỗ trợ: JPG, PNG, GIF, SVG, MP4, WEBM, MP3, WAV, OGG,
-            GLB, GLTF. Kích thước tối đa: 25 MB
+            Các loại tệp hỗ trợ: JPG, PNG, GIF, SVG, MP4, MP3, PDF, WORD, EXCEL, ZIP, RAR, PPT. Kích thước tối đa: 25 MB
           </p>
         </div>
 

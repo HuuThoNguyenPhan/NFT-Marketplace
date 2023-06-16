@@ -9,7 +9,7 @@
 
     left: -17rem;
     top: 4.5rem;
-    z-index: 22222222222;
+    z-index: 1;
     background-color: var(--main-bg-color);
 }
 

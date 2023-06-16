@@ -56,6 +56,11 @@
 
 .image{
     object-fit: contain;
+    
+}
+.audio_player{
+    width: 100%;
+    font-size: 1rem
 }
 @media screen and (max-width: 35em) {
     .DropZone_box_aside_box_preview_one{

@@ -6,7 +6,7 @@ import "contracts/NFTFactory.sol";
 contract Auction {
     NFTFactory public nftFactory;
     uint256 public constant MINIMUM_BID_RATE = 110;
-    uint256 public constant AUCTION_SERVICE_FEE_RATE = 3;
+    uint256 public AUCTION_SERVICE_FEE_RATE = 3;
     address payable owner;
 
     constructor(address _nftFactory) {
@@ -30,6 +30,7 @@ contract Auction {
 
     AuctionInfo[] private auction;
 
+    event join(address bidder, uint256 amount, uint256 auctionId);
     function getBlockTime() public view returns (uint256) {
         return block.timestamp;
     }
@@ -78,6 +79,11 @@ contract Auction {
         auction.push(_auction);
     }
 
+    function setFee(uint256 fee) public {
+        require(msg.sender == owner, "use not admin");
+        AUCTION_SERVICE_FEE_RATE = fee;
+    }
+
     function joinAuction(uint256 _auctionId, uint256 _bid) public payable {
         AuctionInfo memory _auction = auction[_auctionId];
         // require(
@@ -103,13 +109,19 @@ contract Auction {
         );
 
         // nftFactory.transfer(address(this),msg.sender,_auction._tokenId);
-        if (_auction.lastBidder != address(0)) {
+        if (_auction.lastBidder != address(0) && msg.sender != _auction.lastBidder) {
             payable(_auction.lastBidder).transfer(_auction.lastBid);
         }
 
-        auction[_auctionId].previousBidder = _auction.lastBidder;
-        auction[_auctionId].lastBidder = msg.sender;
-        auction[_auctionId].lastBid = _bid;
+        if (auction[_auctionId].lastBidder == msg.sender){
+            auction[_auctionId].lastBid += _bid;
+        }else{
+            auction[_auctionId].lastBid = _bid;
+            auction[_auctionId].lastBidder = msg.sender;
+            auction[_auctionId].previousBidder = _auction.lastBidder;
+        }
+         emit join(msg.sender,auction[_auctionId].lastBid,_auctionId);
+       
     }
 
     function finishAuction(uint256 _auctionId)

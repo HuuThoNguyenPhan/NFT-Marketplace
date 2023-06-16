@@ -4,11 +4,11 @@ const productSchema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,
-    maxLength: [50, "Tên tối đa 20 ký tự"],
+    maxLength: [50, "Tên tối đa 50 ký tự"],
   },
   description: {
     type: String,
-    maxlength: [250, "Description is can not exceed than 250 characters"],
+    maxlength: [2000, "Description is can not exceed than 1000 characters"],
   },
   image: { type: String },
   typeFile: { type: String },
@@ -23,6 +23,13 @@ const productSchema = new mongoose.Schema({
   },
   genealogy: {
     type: String,
+  },
+  only: {
+    type: Boolean,
+    default: true,
+  },
+  topics: {
+    type: Array,
   },
   createAt: {
     type: Date,

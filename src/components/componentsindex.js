@@ -15,6 +15,8 @@ import Slider from "./Slider/Slider";
 import Loader from "./Loader/Loader";
 import Error from "./Error/Error";
 import UploadProfile from "./CredentialPage/UploadProfile";
+import OptionTopic from "./optionTopic/optionTopic";
+
 export {
   Button,
   Footer,
@@ -32,5 +34,6 @@ export {
   Slider,
   Loader,
   Error,
-  UploadProfile
+  UploadProfile,
+  OptionTopic
 };

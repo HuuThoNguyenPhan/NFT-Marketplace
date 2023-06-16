@@ -55,6 +55,7 @@
     border: 0;
     background-color: transparent;
     outline: none;
+    
 }
 
 .Form_box_input textarea{
@@ -65,12 +66,31 @@
     padding: 1rem;
     border: 1px solid var(--icons-color);
 }
-
+.Form_box_input_box_select{
+    width: 100%;
+    border: none;
+    height: 3rem;
+    cursor: pointer;
+}
+.Form_box_input_box_select:focus{
+    outline: none;
+}
+.Form_box_input_box_select option {
+    border: none;
+    outline: none;
+    -webkit-appearance: none; /* for Safari */
+    font-size: 1.2rem;
+    border-radius: 0;
+}
+.Form_box_input_box_select_option{
+    width: 100%;
+}
 .Form_box_input_social{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
 }
+
 .Form_box_btn{
     margin: 4rem 0;
 }

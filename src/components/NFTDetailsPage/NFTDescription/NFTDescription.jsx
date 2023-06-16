@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import jazzicon from "@metamask/jazzicon";
 import {
@@ -12,6 +10,7 @@ import {
 } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
 import { FaWallet } from "react-icons/fa";
+import { FiX, FiChevronDown } from "react-icons/fi";
 import {
   TiSocialFacebook,
   TiSocialLinkedin,
@@ -20,7 +19,6 @@ import {
   TiSocialInstagram,
 } from "react-icons/ti";
 import { BiTransferAlt, BiDollar } from "react-icons/bi";
-import { RiAuctionLine } from "react-icons/ri";
 
 //INTERNAL IMPORT
 import Style from "./NFTDescription.module.css";
@@ -31,14 +29,16 @@ import { NFTTabs } from "../NFTDetailsIndex";
 //IMPORT SMART CONTRACT
 import { NFTMarketplaceContext } from "../../../../Context/NFTMarketplaceContext";
 
-const NFTDescription = ({ nft }) => {
+const NFTDescription = ({ nft, lastBid, lastBidder }) => {
   const {
     buyNFT,
     currentAccount,
-    fecthOwner,
+    fetchOwner,
     changeCurrency,
     cancleAuction,
     joinAuction,
+    fetchContentReports,
+    sendReport,
   } = useContext(NFTMarketplaceContext);
 
   const [social, setSocial] = useState(false);
@@ -47,18 +47,61 @@ const NFTDescription = ({ nft }) => {
   const [provanance, setProvanance] = useState(false);
   const [owner, setOwner] = useState(false);
   const [ownerArray, setOwnerArray] = useState([images.user1]);
-  const [price, setPrice] = useState(nft.price);
+  const [changePrice, setChangePrice] = useState();
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const historyArray = ["gà"];
   const [bid, setBid] = useState(1);
+  const [timeRemaining, setTimeRemaining] = useState(0);
   const sellerRef = useRef();
   const authorRef = useRef();
+  const [reports, setReports] = useState([]);
+  const [reason, setReason] = useState("");
+  const [openListReport, setOpenListReport] = useState(false);
+  const [openReport, setOpenReport] = useState(false);
+
+  const handleOpenReport = () => {
+    setOpenReport(true);
+    setNFTMenu(false);
+  };
+
+  const handleCloseReport = () => {
+    setReason("");
+    document.getElementsByClassName(".type_Reason").value = "";
+    setOpenReport(false);
+    setOpenListReport(false);
+  };
+
+  const handleOpenListReport = () => {
+    fetchContentReports().then((res) => {
+      setOpenListReport(!openListReport);
+      setReports(res)
+    });
+  };
+
   function handleNavigation() {
     Router.push({ pathname: "/author", query: { seller: `${nft.seller}` } });
     window.print = function () {};
   }
+  useEffect(() => {
+    if (nft.endTime) {
+      setTimeRemaining(
+        new Date(nft.endTime.toNumber()).getTime() - new Date().getTime()
+      );
+      const intervalId = setInterval(() => {
+        setTimeRemaining((prevTimeRemaining) => prevTimeRemaining - 1000);
+      }, 1000);
 
+      return () => clearInterval(intervalId);
+    }
+  }, [nft.endTime]);
+
+  const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(
+    (timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
+  const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
   const openSocial = () => {
     if (!social) {
       setSocial(true);
@@ -105,27 +148,27 @@ const NFTDescription = ({ nft }) => {
     const { current: element } = ref;
     if (element && address) {
       const seed = parseInt(address.slice(2, 10), 16);
-      const icon = jazzicon(45, seed); 
+      const icon = jazzicon(45, seed);
       if (element.firstChild) {
         element.removeChild(element.firstChild);
       }
       element.appendChild(icon);
     }
-  }
+  };
 
   useEffect(() => {
     convertImage(nft.seller, sellerRef);
     convertImage(nft.author, authorRef);
-  }, [nft.seller,nft.author]);
+  }, [nft.seller, nft.author]);
 
   useEffect(() => {
-    changeCurrency(nft.price).then((e) => {
-      setPrice(e);
+    changeCurrency(lastBid || nft.price).then((e) => {
+      setChangePrice(e);
     });
-    fecthOwner(nft.tokenIds).then((owners) => {
+    fetchOwner(nft.tokenIds).then((owners) => {
       setOwnerArray(owners);
     });
-  }, [owner, price]);
+  }, [owner, changePrice]);
 
   return (
     <div className={Style.NFTDescription}>
@@ -165,43 +208,109 @@ const NFTDescription = ({ nft }) => {
 
             {NFTMenu && (
               <div className={Style.NFTDescription_box_share_box_social}>
-                <a href="#">
-                  <BiDollar /> Change price
-                </a>
-                <a href="#">
-                  <BiTransferAlt /> Transfer
-                </a>
-                <a href="#">
-                  <MdReportProblem /> Report abouse
-                </a>
-                <a href="#">
-                  <MdOutlineDeleteSweep /> Delete item
+                <a onClick={handleOpenReport}>
+                  <MdReportProblem /> Tố cáo
                 </a>
               </div>
             )}
           </div>
         </div>
 
-        <div className={Style.NFTDescription_box_profile}>
-          <h1>{nft.name} #{nft.tokenId}</h1>
-          <div className={Style.NFTDescription_box_profile_box}>
-            <div className={Style.NFTDescription_box_profile_box_left}>
-            <div ref={sellerRef} style={{cursor: "pointer"}} onClick={handleNavigation}></div>
-              <div className={Style.NFTDescription_box_profile_box_left_info}>
-                <small>Người tạo</small> <br />
-                <span style={{cursor: "pointer"}} onClick={handleNavigation}>
-                  {nft.seller.slice(0, 6)}...{nft.seller.slice(-4)} <MdVerified />
-                </span>
-              </div>
+        <div
+          className={`${Style.Report_table}  ${
+            openReport && Style.Report_table_show
+          }`}
+        >
+          <div className={Style.Report_table_header}>
+            <h3>Tố cáo sản phẩm</h3>
+            <FiX
+              className={Style.close}
+              onClick={() => handleCloseReport()}
+              size={23}
+            />
+          </div>
+          <label>
+            Tôi nghỉ sản phẩm này ...<br></br>
+            <div style={{ position: "relative" }}>
+              <input
+                className={Style.type_Reason}
+                placeholder="Chọn lý do"
+                readOnly
+                value={reason == "" ? "" : reason.description}
+                onClick={handleOpenListReport}
+              />
+              <FiChevronDown
+                size={22}
+                className={`${Style.icon_down}  ${
+                  openListReport && Style.icon_down_show
+                }`}
+              />
+              {openListReport == true && (
+                <div className={Style.reasons_Report}>
+                  {reports.map((report) => (
+                    <div
+                      className={Style.reasons_Report_item}
+                      onClick={() => setReason(report)}
+                    >
+                      {report.description}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
+          </label>
+          {reason == "" ? (
+            <button className={Style.btn_Report_fade}>Tố cáo</button>
+          ) : (
+            <button
+              className={Style.btn_Report}
+              onClick={() => {
+                sendReport(reason.option, nft.genealogy, handleCloseReport());
+              }}
+            >
+              Tố cáo
+            </button>
+          )}
+        </div>
+
+        {openReport && <div className={Style.overlay}></div>}
+        <div className={Style.NFTDescription_box_profile}>
+          <h1>
+            {nft.name} #{nft.tokenId}
+          </h1>
+          <div className={Style.NFTDescription_box_profile_box}>
+            {nft.seller != "0x0000000000000000000000000000000000000000" && (
+              <div className={Style.NFTDescription_box_profile_box_left}>
+                <div
+                  ref={sellerRef}
+                  style={{ cursor: "pointer" }}
+                  onClick={handleNavigation}
+                ></div>
+                <div className={Style.NFTDescription_box_profile_box_left_info}>
+                  <small>Người đăng</small> <br />
+                  <span
+                    style={{ cursor: "pointer" }}
+                    onClick={handleNavigation}
+                  >
+                    {nft.seller.slice(0, 6)}...{nft.seller.slice(-4)}{" "}
+                    <MdVerified />
+                  </span>
+                </div>
+              </div>
+            )}
 
             <div className={Style.NFTDescription_box_profile_box_right}>
-            <div ref={authorRef} style={{cursor: "pointer"}} onClick={handleNavigation}></div>
+              <div
+                ref={authorRef}
+                style={{ cursor: "pointer" }}
+                onClick={handleNavigation}
+              ></div>
 
               <div className={Style.NFTDescription_box_profile_box_right_info}>
-                <small>Người sở hữu</small> <br />
+                <small>Tác giả</small> <br />
                 <span>
-                {nft.seller.slice(0, 6)}...{nft.seller.slice(-4)} <MdVerified />
+                  {nft.author.slice(0, 6)}...{nft.author.slice(-4)}{" "}
+                  <MdVerified />
                 </span>
               </div>
             </div>
@@ -209,43 +318,81 @@ const NFTDescription = ({ nft }) => {
 
           <div className={Style.NFTDescription_box_profile_biding}>
             <p>
-              <MdTimer /> <span>Kết thúc trong vòng:</span>
+              <MdTimer />{" "}
+              <span>
+                {nft.auctionId != undefined
+                  ? "Kết thúc trong vòng:"
+                  : "Đăng ngày:"}
+              </span>
             </p>
 
-            <div className={Style.NFTDescription_box_profile_biding_box_timer}>
+            {nft.auctionId != undefined ? (
               <div
-                className={
-                  Style.NFTDescription_box_profile_biding_box_timer_item
-                }
+                className={Style.NFTDescription_box_profile_biding_box_timer}
               >
-                <p>2</p>
-                <span>Ngày</span>
+                <div
+                  className={
+                    Style.NFTDescription_box_profile_biding_box_timer_item
+                  }
+                >
+                  <p>{days}</p>
+                  <span>Ngày</span>
+                </div>
+                <div
+                  className={
+                    Style.NFTDescription_box_profile_biding_box_timer_item
+                  }
+                >
+                  <p>{hours}</p>
+                  <span>Giờ</span>
+                </div>
+                <div
+                  className={
+                    Style.NFTDescription_box_profile_biding_box_timer_item
+                  }
+                >
+                  <p>{minutes}</p>
+                  <span>Phút</span>
+                </div>
+                <div
+                  className={
+                    Style.NFTDescription_box_profile_biding_box_timer_item
+                  }
+                >
+                  <p>{seconds}</p>
+                  <span>Giây</span>
+                </div>
               </div>
+            ) : (
               <div
-                className={
-                  Style.NFTDescription_box_profile_biding_box_timer_item
-                }
+                className={Style.NFTDescription_box_profile_biding_box_timer}
               >
-                <p>22</p>
-                <span>Giờ</span>
+                <div
+                  className={
+                    Style.NFTDescription_box_profile_biding_box_timer_item
+                  }
+                >
+                  <span>Ngày</span>
+                  <p>{nft.createAt.split("/")[1]}</p>
+                </div>
+                <div
+                  className={
+                    Style.NFTDescription_box_profile_biding_box_timer_item
+                  }
+                >
+                  <span>Thàng</span>
+                  <p>{nft.createAt.split("/")[0]}</p>
+                </div>
+                <div
+                  className={
+                    Style.NFTDescription_box_profile_biding_box_timer_item
+                  }
+                >
+                  <span>Năm</span>
+                  <p>{nft.createAt.split("/")[2]}</p>
+                </div>
               </div>
-              <div
-                className={
-                  Style.NFTDescription_box_profile_biding_box_timer_item
-                }
-              >
-                <p>45</p>
-                <span>Phút</span>
-              </div>
-              <div
-                className={
-                  Style.NFTDescription_box_profile_biding_box_timer_item
-                }
-              >
-                <p>12</p>
-                <span>Giây</span>
-              </div>
-            </div>
+            )}
 
             <div className={Style.NFTDescription_box_profile_biding_box_price}>
               <div
@@ -253,11 +400,18 @@ const NFTDescription = ({ nft }) => {
                   Style.NFTDescription_box_profile_biding_box_price_bid
                 }
               >
-                <small>
-                  Giá hiện tại || Số lượng: {nft.count || 1} sản phẩm
-                </small>
-                <p>{nft.price} ETH</p>
-                <p>(≈ {price})</p>
+                <small>Giá hiện tại || Số lượng: {nft.count || 1}</small>
+                <p>{lastBid || nft.price} ETH</p>
+                <p>(≈ {changePrice})</p>
+                {nft.auctionId && lastBidder && (
+                  <>
+                    <p title={lastBidder}>Người tham gia cuối cùng</p>
+                    <p title={lastBidder}>
+                      {lastBidder?.slice(0, 6) ?? "Chưa có"}...
+                      {lastBidder?.slice(-4) ?? "Chưa có"}
+                    </p>
+                  </>
+                )}
               </div>
             </div>
 
@@ -294,17 +448,7 @@ const NFTDescription = ({ nft }) => {
                     handleClick={() =>
                       router.push({
                         pathname: "/createAuction",
-                        query: {
-                          data: [
-                            nft.tokenId,
-                            // nft.image,
-                            // nft.price,
-                            // nft.count,
-                            // nft.name,
-                            // nft.price,
-                          ],
-                          tokenIds: nft.tokenIds ? nft.tokenIds : nft.tokenId,
-                        },
+                        query: nft,
                       })
                     }
                     classStyle={Style.button}
@@ -315,22 +459,26 @@ const NFTDescription = ({ nft }) => {
                   className={Style.NFTDescription_box_profile_biding_box_button}
                 >
                   <div>
-                    <input
-                      type="number"
-                      min={1}
-                      value={quantity}
-                      onChange={(e) => {
-                        setQuantity(e.target.value);
-                      }}
-                    />
-                    <span>
-                      {nft.quantity < nft.limit
-                        ? "[Số lượng mua <= " + nft.quantity + "]"
-                        : "[Số lượng mua <= " + nft.limit + "]"}
-                    </span>
+                    {nft.only == "false" && (
+                      <div>
+                        <input
+                          type="number"
+                          min={1}
+                          value={quantity}
+                          onChange={(e) => {
+                            setQuantity(e.target.value);
+                          }}
+                        />
+                        <span>
+                          {nft.quantity < nft.limit
+                            ? "[Số lượng mua <= " + nft.quantity + "]"
+                            : "[Số lượng mua <= " + nft.limit + "]"}
+                        </span>
+                      </div>
+                    )}
                     <Button
                       icon=<FaWallet />
-                      btnName="Mua ngay"
+                      btnName="Mua"
                       handleClick={() => buyNFT(nft, quantity)}
                       classStyle={Style.button}
                     />
@@ -346,7 +494,9 @@ const NFTDescription = ({ nft }) => {
                   <Button
                     icon=<FaWallet />
                     btnName="Hủy phiên"
-                    handleClick={() => cancleAuction(nft.auctionId, true)}
+                    handleClick={() =>
+                      cancleAuction(nft.auctionId, true, nft.tokenId, nft.name)
+                    }
                     classStyle={Style.button}
                   />
 
@@ -355,7 +505,14 @@ const NFTDescription = ({ nft }) => {
                     <Button
                       icon=<FaWallet />
                       btnName="Kết thúc"
-                      handleClick={() => cancleAuction(nft.auctionId, false)}
+                      handleClick={() =>
+                        cancleAuction(
+                          nft.auctionId,
+                          false,
+                          nft.tokenId,
+                          nft.name
+                        )
+                      }
                       classStyle={Style.button}
                     />
                   )}
@@ -374,19 +531,18 @@ const NFTDescription = ({ nft }) => {
                       }}
                     />
                     <span>
-                      Giá trị nhập thấp nhất
-                      {parseFloat((nft.price * 10) / 100) +
-                        parseFloat(nft.price)}{" "}
+                      Giá trị nhập thấp nhất{" "}
+                      {parseFloat((lastBid || nft.price * 10) / 100) +
+                        parseFloat(lastBid || nft.price)}{" "}
                       ETH
                     </span>
-                    {currentAccount != nft.lastBidder.toLowerCase() && (
-                      <Button
-                        icon=<FaWallet />
-                        btnName="Đấu giá"
-                        handleClick={() => joinAuction(nft.auctionId, bid)}
-                        classStyle={Style.button}
-                      />
-                    )}
+
+                    <Button
+                      icon=<FaWallet />
+                      btnName="Đấu giá"
+                      handleClick={() => joinAuction(nft.auctionId, bid)}
+                      classStyle={Style.button}
+                    />
                   </div>
                 </div>
               ))
@@ -396,7 +552,7 @@ const NFTDescription = ({ nft }) => {
               <button onClick={() => openOwmer()}>Người sở hữu</button>
               <button onClick={(e) => openTabs(e)}>Lịch sử giá</button>
             </div>
-            {owner && ownerArray && (
+            {/* {owner && ownerArray && (
               <div className={Style.NFTDescription_box_profile_biding_box_card}>
                 <NFTTabs dataTab={ownerArray} />
               </div>
@@ -406,7 +562,7 @@ const NFTDescription = ({ nft }) => {
               <div className={Style.NFTDescription_box_profile_biding_box_card}>
                 <NFTTabs dataTab={historyArray} />
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

@@ -59,10 +59,10 @@ const Home = () => {
         paragraph="Xem các sản phẩm NFT theo thể loại."
       />
       <Category />
-      <Slider nfts={nfts} title="NFTs Ảnh"/>
+      {/* <Slider nfts={nfts} title="NFTs Ảnh"/>
       <Slider nfts={nfts} title="NFTs Video"/>
       <Slider nfts={nfts} title="NFTs Âm thanh"/>
-      <Slider nfts={nfts} title="NFTs các loại tệp khác" />
+      <Slider nfts={nfts} title="NFTs các loại tệp khác" /> */}
       {/* <Filter />
       {nfts.length == 0 ? <Loader /> : <NFTCard NFTData={nfts} />} */}
     </div>

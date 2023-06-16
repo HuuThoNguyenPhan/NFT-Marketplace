@@ -1,18 +1,26 @@
+.form_resell {
+    width: "80%";
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: space-around;
+    font-weight: bold;
+}
 
-.reSellToken{
+.reSellToken {
     width: 100%;
     margin-block: 4rem;
 }
 
-.reSellToken_box{
+.reSellToken_box {
     width: 60%;
-    margin:  0 auto;
+    margin: 0 auto;
 }
-.reSellToken_box h1{
+
+.reSellToken_box h1 {
     font-size: 3rem;
 }
 
-.reSellToken_box_image{
+.reSellToken_box_image {
     display: inline-block;
     position: relative;
     left: 50%;
@@ -20,8 +28,17 @@
     margin-block: 3rem;
 }
 
+.button {
+    margin-top: 2rem;
+    width: 50%;
+    display: inline-block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 @media screen and (max-width: 35em) {
-    .reSellToken_box{
+    .reSellToken_box {
         width: 90%;
     }
 }

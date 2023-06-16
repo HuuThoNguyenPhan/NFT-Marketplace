@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { AiFillCheckCircle } from "react-icons/ai";
 import {
-  MdVerified,
   MdCloudUpload,
   MdOutlineReportProblem,
 } from "react-icons/md";
@@ -16,7 +15,6 @@ import { BsThreeDots } from "react-icons/bs";
 
 //INTERNAL IMPORT
 import Style from "./AuthorProfileCard.module.css";
-import images from "../../../assets/img";
 import { Button } from "../../../components/componentsindex.js";
 import jazzicon from "@metamask/jazzicon";
 const AuthorProfileCard = ({ currentAccount }) => {
@@ -25,7 +23,7 @@ const AuthorProfileCard = ({ currentAccount }) => {
   const sellerRef = useRef();
   useEffect(() => {
     convertImage(currentAccount, sellerRef);
-  })
+  });
   //copyAddress function
   const copyAddress = () => {
     const copyText = document.getElementById("myInput");
@@ -38,13 +36,13 @@ const AuthorProfileCard = ({ currentAccount }) => {
     const { current: element } = ref;
     if (element && address) {
       const seed = parseInt(address.slice(2, 10), 16);
-      const icon = jazzicon(100, seed); 
+      const icon = jazzicon(100, seed);
       if (element.firstChild) {
         element.removeChild(element.firstChild);
       }
       element.appendChild(icon);
     }
-  }
+  };
   const openShare = () => {
     if (!share) {
       setShare(true);
@@ -67,14 +65,21 @@ const AuthorProfileCard = ({ currentAccount }) => {
     <div className={Style.AuthorProfileCard}>
       <div className={Style.AuthorProfileCard_box}>
         <div className={Style.AuthorProfileCard_box_img}>
-          <div ref={sellerRef} style={{cursor: "pointer", display: "flex", justifyContent:"center"}}></div>
+          <div
+            ref={sellerRef}
+            style={{
+              cursor: "pointer",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          ></div>
         </div>
 
         <div className={Style.AuthorProfileCard_box_info}>
           <h2>
-            Chưa đặt tên
+            User135
             <span>
-              <MdVerified />
+              <AiFillCheckCircle color="#22d5ea" size={25}/>
             </span>
           </h2>
 
@@ -87,8 +92,7 @@ const AuthorProfileCard = ({ currentAccount }) => {
           </div>
 
           <p>
-            Punk #4786 / An OG Cryptopunk Collector, hoarder of NFTs.
-            Contributing to @ether_cards, an NFT Monetization Platform.
+            Mô tả của người dùng sẽ hiển thị ở đây nếu có
           </p>
 
           <div className={Style.AuthorProfileCard_box_info_social}>
@@ -108,7 +112,10 @@ const AuthorProfileCard = ({ currentAccount }) => {
         </div>
 
         <div className={Style.AuthorProfileCard_box_share}>
-          <Button btnName="Theo dõi" handleClick={() => {}} />
+          <Button
+            btnName="Theo dõi"
+            handleClick={() => {}}
+          />
           <MdCloudUpload
             onClick={() => openShare()}
             className={Style.AuthorProfileCard_box_share_icon}

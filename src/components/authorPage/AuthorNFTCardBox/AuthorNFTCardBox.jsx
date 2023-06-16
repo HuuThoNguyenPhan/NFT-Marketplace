@@ -17,31 +17,7 @@ const AuthorNFTCardBox = ({
   endAuction,
   endAuctions,
 }) => {
-  // const collectiablesArray = [
-  //   images.nft_image_1,
-  //   images.nft_image_2,
-  //   images.nft_image_3,
-  //   images.nft_image_1,
-  //   images.nft_image_2,
-  //   images.nft_image_3,
-  //   images.nft_image_1,
-  //   images.nft_image_2,
-  // ];
 
-  // const createdArray = [
-  //   images.nft_image_1,
-  //   images.nft_image_2,
-  //   images.nft_image_3,
-  //   images.nft_image_1,
-  // ];
-
-  // const likeArray = [
-  //   images.nft_image_1,
-  //   images.nft_image_2,
-  //   images.nft_image_3,
-  //   images.nft_image_1,
-  //   images.nft_image_2,
-  // ];
 
   const followerArray = [
     {
@@ -105,10 +81,10 @@ const AuthorNFTCardBox = ({
   ];
   return (
     <div className={Style.AuthorNFTCardBox}>
-      {collectiables && nfts && <NFTCard NFTData={nfts} />}
-      {created && myNFTS && <NFTCard NFTData={myNFTS} />}
-      {auction && auctions && <NFTCard NFTData={auctions} />}
-      {endAuction && endAuctions && <NFTCard NFTData={endAuctions} />}
+      {collectiables && nfts && <NFTCardTwo NFTData={nfts} />}
+      {created && myNFTS && <NFTCardTwo NFTData={myNFTS} />}
+      {auction && auctions && <NFTCardTwo NFTData={auctions} />}
+      {endAuction && endAuctions && <NFTCardTwo NFTData={endAuctions} />}
       {/* {like && <NFTCardTwo NFTData={nfts} />}
       {follower && (
         <div className={Style.AuthorNFTCardBox_box}>

@@ -62,7 +62,7 @@
 .NFTDetailsImg_box_description_box{
     padding: .1rem 1rem;
     font-size: 1rem;
-    word-break: break-all;
+    word-break: break-word
 }
 
 .NFTDetailsImg_box_details_box p{

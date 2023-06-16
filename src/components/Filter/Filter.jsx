@@ -62,8 +62,8 @@ const Filter = (props) => {
     <div className={Style.filter}>
       <div className={Style.filter_box}>
         <div className={Style.filter_box_left}>
-          <button onClick={() => {props.setNft(true)}}>Sản phẩm</button>
-          <button onClick={() => {props.setNft(false)}}>Đấu giá</button>
+          <button className={`${props.nft ? Style.filter_box_left_active : ""}`} onClick={() => {props.setNft(true)}}>Sản phẩm</button>
+          <button className={`${!props.nft ? Style.filter_box_left_active : ""}`} onClick={() => {props.setNft(false)}}>Đấu giá</button>
         </div>
 
         <div className={Style.filter_box_right}>
@@ -101,7 +101,7 @@ const Filter = (props) => {
               className={Style.filter_box_items_box_item_trans}
               onClick={openImage}
             >
-              <FaImages /> <small>Images</small>
+              <FaImages /> <small>Ảnh</small>
               {image ? <AiFillCloseCircle /> : <TiTick />}
             </div>
           </div>
@@ -111,7 +111,7 @@ const Filter = (props) => {
               className={Style.filter_box_items_box_item_trans}
               onClick={openVideo}
             >
-              <FaVideo /> <small>Videos</small>
+              <FaVideo /> <small>Video</small>
               {video ? <AiFillCloseCircle /> : <TiTick />}
             </div>
           </div>
@@ -121,7 +121,7 @@ const Filter = (props) => {
               className={Style.filter_box_items_box_item_trans}
               onClick={openMusic}
             >
-              <FaMusic /> <small>Musics</small>
+              <FaMusic /> <small>Nhạc</small>
               {music ? <AiFillCloseCircle /> : <TiTick />}
             </div>
           </div>

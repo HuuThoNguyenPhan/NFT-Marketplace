@@ -11,7 +11,7 @@ const Discover = () => {
       link: "collection",
     },
     {
-      name: "Tìm kiếm",
+      name: "Khám phá",
       link: "searchPage",
     },
     {

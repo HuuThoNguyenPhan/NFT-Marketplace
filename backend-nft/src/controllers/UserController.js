@@ -108,8 +108,8 @@ exports.updateUser = async (req, res) => {
 
 exports.getUserDetails = async (req, res) => {
   try {
-    const data = req.body;
-    const user = await User.create(data);
+    const {addressWallet} = req.params;
+    const user = await User.findOne({ addressWallet }).lean();
 
     res.status(200).json({
       success: true,

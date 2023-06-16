@@ -11,13 +11,14 @@ import {
 import { SearchBar } from "../components/SearchPage/searchBarIndex";
 import { Filter } from "../components/componentsindex";
 
-import { Banner } from "../components/collectionPage/collectionIndex";
-import images from "../assets/img";
+import {
+  NFTCardTwo,
+} from "../components/collectionPage/collectionIndex";
 
 import { NFTMarketplaceContext } from "../../Context/NFTMarketplaceContext";
 
 const searchPage = () => {
-  const { fetchNFTs, setError, currentAccount, fetchAuction } = useContext(
+  const { fetchNFTs, setError, fetchAuction } = useContext(
     NFTMarketplaceContext
   );
   const [nft, setNft] = useState(true);
@@ -46,7 +47,7 @@ const searchPage = () => {
             }
             finalItems.push(items[i]);
           }
-
+          console.log(finalItems[0].royalties);
           setNfts(finalItems.reverse());
           setNftsCopy(finalItems);
         }
@@ -54,13 +55,13 @@ const searchPage = () => {
     } catch (error) {
       setError("Hãy tải lại trình duyệt", error);
     }
-
-    fetchAuction(true).then((items) => {
-      setAuctions(items);
-      console.log(items);
-    });
   }, []);
 
+  useEffect(() => {
+    fetchAuction(true).then((items) => {
+      setAuctions(items);
+    });
+  },[]);
   const onHandleSearch = (value) => {
     const filteredNFTS = nfts.filter(({ name }) =>
       name.toLowerCase().includes(value.toLowerCase())
@@ -102,39 +103,26 @@ const searchPage = () => {
         nftsCopy.filter((e) => e.typeFile == "image")
       );
 
-    console.log(filteredNFTS + "aaaaaaaaa");
     setNfts(filteredNFTS);
   }
 
-  // const collectionArray = [
-  //   images.nft_image_1,
-  //   images.nft_image_2,
-  //   images.nft_image_3,
-  //   images.nft_image_1,
-  //   images.nft_image_2,
-  //   images.nft_image_3,
-  //   images.nft_image_1,
-  //   images.nft_image_2,
-  // ];
   return (
     <div className={Style.searchPage}>
-      <Banner bannerImage={images.creatorbackground2} />
       <SearchBar
         onHandleSearch={onHandleSearch}
         onClearSearch={onClearSearch}
       />
-      <div>{nft}</div>
-      <Filter setNft={setNft} onHandleFilter={onHandleFilter} />
+      <Filter nft={nft} setNft={setNft} onHandleFilter={onHandleFilter} />
       {nft ? (
         nfts.length == 0 ? (
           <Loader />
         ) : (
-          <NFTCard NFTData={nfts} />
+          <NFTCardTwo NFTData={nfts} />
         )
       ) : auctions.length == 0 ? (
         <Loader />
       ) : (
-        <NFTCard NFTData={auctions} />
+        <NFTCardTwo NFTData={auctions} />
       )}
     </div>
   );

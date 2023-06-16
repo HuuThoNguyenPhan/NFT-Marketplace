@@ -59,7 +59,9 @@ import transfer from "./transfer.gif";
 import transferEther from "./ethereTransfer.gif";
 import avatar from "./avatar.png";
 import file from "./file.png";
+import music_ava from "./music_ava.png"
 export default {
+  music_ava,
   file,
   avatar,
   hero2,
