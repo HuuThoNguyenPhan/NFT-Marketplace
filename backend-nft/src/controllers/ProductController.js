@@ -3,6 +3,7 @@ const Like = require("../models/Like.js");
 const Product = require("../models/ProductModel.js");
 const Report = require("../models/Report.js");
 const Topic = require("../models/Topic.js");
+const { setObject } = require("../config/redis-connect.js");
 exports.createProduct = async (req, res) => {
   try {
     const data = req.body.Metadata;

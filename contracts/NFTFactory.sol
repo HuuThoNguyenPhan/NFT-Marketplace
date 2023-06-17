@@ -8,7 +8,11 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "hardhat/console.sol";
 
 contract NFTFactory is ERC721URIStorage {
-    constructor() ERC721("Metaverse Tokens", "METT") {}
+    address payable owner;
+
+    constructor() ERC721("Metaverse Tokens", "METT") {
+        owner = payable(msg.sender);
+    }
 
     mapping(uint256 => MarketItem) public idToMarketItem;
 
@@ -45,11 +49,9 @@ contract NFTFactory is ERC721URIStorage {
         );
     }
 
-    function getAllNFT(uint256 length)
-        public
-        view
-        returns (MarketItem[] memory)
-    {
+    function getAllNFT(
+        uint256 length
+    ) public view returns (MarketItem[] memory) {
         MarketItem[] memory results = new MarketItem[](length);
         for (uint256 i = 0; i < length; i++) {
             results[i] = idToMarketItem[i];
@@ -73,7 +75,15 @@ contract NFTFactory is ERC721URIStorage {
         idToMarketItem[index].price = price;
         idToMarketItem[index].seller = payable(seller);
         idToMarketItem[index].owner = payable(owner);
-         idToMarketItem[index].isauction = isauction;
+        idToMarketItem[index].isauction = isauction;
+    }
+
+    function updatePriceNFT(uint256 index, uint256 price) public {
+        idToMarketItem[index].price = price;
+    }
+
+    function banNFT(uint256 index) public {
+        idToMarketItem[index].owner = payable(address(0));
     }
 
     function mint(address sender, uint256 tokenid) public {
@@ -84,11 +94,11 @@ contract NFTFactory is ERC721URIStorage {
         _setTokenURI(tokenId, tokenURI);
     }
 
-    function transfer(
-        address sender,
-        address to,
-        uint256 tokenId
-    ) public {
+    function getTokenURI(uint256 tokenId) public view returns (string memory) {
+        return tokenURI(tokenId);
+    }
+
+    function transfer(address sender, address to, uint256 tokenId) public {
         _transfer(sender, to, tokenId);
     }
 }

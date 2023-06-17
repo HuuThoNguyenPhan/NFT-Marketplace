@@ -7,10 +7,11 @@ const {
   addressUpdate,
   getAddress,
   getUserDetails,
+  test,
 } = require("../controllers/UserController");
 
 const router = express.Router();
-
+router.route("/test").get(test);
 router.route("/user/create").post(createUser);
 router.route("/users").get(getAllUser);
 router.route("/user/update").put(updateUser);

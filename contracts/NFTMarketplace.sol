@@ -6,6 +6,7 @@ import "contracts/NFTFactory.sol";
 contract NFTMarketplace {
     NFTFactory public nftFactory;
     uint256 listingPrice = 0.025 ether;
+    // uint256 listingPrice = 3;
     address payable owner;
     using Counters for Counters.Counter;
     Counters.Counter _tokenIds;
@@ -28,6 +29,22 @@ contract NFTMarketplace {
         address seller,
         address owner,
         uint256 price,
+        bool sold,
+        string idMG
+    );
+    event resellItem(
+        uint256 indexed tokenId,
+        address seller,
+        address owner,
+        uint256 price,
+        bool sold,
+        string idMG
+    );
+    event buyItem(
+        uint256 indexed tokenId,
+        address seller,
+        address owner,
+        uint256 price,
         bool sold
     );
 
@@ -40,6 +57,15 @@ contract NFTMarketplace {
             "Only marketplace owner can update listing price."
         );
         listingPrice = _listingPrice;
+    }
+
+    function banNFT(uint256[] memory tokenIds) public payable onlyOwner {
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            address owner = nftFactory.detailNFT(tokenIds[i]).owner;
+            nftFactory.transfer(owner, address(0), tokenIds[i]);
+            nftFactory.banNFT(tokenIds[i]);
+            _itemsSold.decrement();
+        }
     }
 
     /* Returns the listing price of the contract */
@@ -116,7 +142,8 @@ contract NFTMarketplace {
             msg.sender,
             address(this),
             price,
-            false
+            false,
+            nftFactory.getTokenURI(tokenId)
         );
     }
 
@@ -131,6 +158,8 @@ contract NFTMarketplace {
                 "Only item owner can perform this operation"
             );
         }
+        // uint256 fee = ((price * listingPrice) / 100) * tokenId.length;
+        // require(msg.value == fee, "Price must be equal to listing price");
         require(
             msg.value == listingPrice,
             "Price must be equal to listing price"
@@ -147,6 +176,14 @@ contract NFTMarketplace {
             );
             _itemsSold.decrement();
             nftFactory.transfer(msg.sender, address(this), tokenId[i]);
+            emit resellItem(
+                tokenId[i],
+                msg.sender,
+                address(this),
+                price,
+                false,
+                nftFactory.getTokenURI(tokenId[i])
+            );
         }
     }
 
@@ -192,6 +229,7 @@ contract NFTMarketplace {
             );
             _itemsSold.increment();
             nftFactory.transfer(address(this), msg.sender, tokenId[i]);
+            emit buyItem(tokenId[i], msg.sender, address(this), price, true);
         }
 
         payable(owner).transfer(listingPrice);
