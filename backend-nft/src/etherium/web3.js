@@ -31,21 +31,19 @@ class NFTMarketplace {
         console.log(
           `Token nft${tokenId} created by ${seller} for ${price} ETH`
         );
-        this.useRedis(tokenId, seller, owner, price, sold, updateProperties);
-        if (!updateProperties) {
-          idMG = idMG.toString().slice(38);
-          const procduc = await Product.findById(idMG);
-          const Object = Object.fromEntries(
-            Object.entries(product.toObject()).filter(([key]) =>
-              ["_id", "__v"].includes(key)
-            )
-          );
-          setObject(`nft${tokenId}`, "Object");
-        }
+        this.useRedis(
+          tokenId,
+          seller,
+          owner,
+          price,
+          sold,
+          idMG,
+          updateProperties
+        );
       }
     );
   }
-  useRedis(tokenId, seller, owner, price, sold, updateProperties) {
+  async useRedis(tokenId, seller, owner, price, sold, idMG, updateProperties) {
     const nftObject = {
       tokenId,
       seller,
@@ -56,7 +54,15 @@ class NFTMarketplace {
     if (updateProperties) {
       deleteObject(`nft${tokenId}`);
     } else {
+      idMG = idMG.toString().slice(38);
+      const procduc = await Product.findById(idMG);
+      const Object = Object.fromEntries(
+        Object.entries(product.toObject()).filter(([key]) =>
+          ["_id", "__v"].includes(key)
+        )
+      );
       setObject(`nft${tokenId}`, nftObject);
+      setObject(`nft${tokenId}`, Object);
     }
   }
   async buyToken(tokenId, price) {
@@ -71,6 +77,8 @@ class NFTMarketplace {
 
   async fetchNFTs() {
     const nfts = await this.contract.fetchMarketItems();
+    //get tokens url from nft
+
     deleteAllObject();
     for (const nft of nfts) {
       this.useRedis(
@@ -79,6 +87,7 @@ class NFTMarketplace {
         nft.owner,
         ethers.formatEther(nft.price),
         nft.sold,
+        "bug",
         null
       );
     }
