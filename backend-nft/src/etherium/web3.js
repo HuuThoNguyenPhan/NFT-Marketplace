@@ -2,6 +2,7 @@ const Address = require("../models/address");
 const Product = require("../models/ProductModel.js");
 const { ethers } = require("ethers");
 const { abi } = require("../config/abi/NFTMarketplace.json");
+const { NFTFactory } = require("./web3_nft.js");
 const {
   setObject,
   updateObject,
@@ -55,7 +56,7 @@ class NFTMarketplace {
       deleteObject(`nft${tokenId}`);
     } else {
       idMG = idMG.toString().slice(38);
-      const procduc = await Product.findById(idMG);
+      const product = await Product.findById(idMG);
       const Object = Object.fromEntries(
         Object.entries(product.toObject()).filter(([key]) =>
           ["_id", "__v"].includes(key)
@@ -78,16 +79,17 @@ class NFTMarketplace {
   async fetchNFTs() {
     const nfts = await this.contract.fetchMarketItems();
     //get tokens url from nft
-
+    const contractFactory = NFTFactory.getInstance();
     deleteAllObject();
     for (const nft of nfts) {
+      const url = await contractFactory.getTokenUrl(nft.tokenId);
       this.useRedis(
         nft.tokenId,
         nft.seller,
         nft.owner,
         ethers.formatEther(nft.price),
         nft.sold,
-        "bug",
+        url,
         null
       );
     }

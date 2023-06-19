@@ -29,3 +29,12 @@ exports.updateObject = async (key, value, newvalue) => {
 exports.deleteObject = async (key) => await redis.del(key);
 exports.deleteAllObject = async () => await redis.flushall();
 exports.deleteObjectByKey = async (key) => await redis.hdel(key, key);
+
+exports.getAllNftHashes = async () => {
+  const pattern = "nft*";
+  const result = [];
+  for await (const key of redis.scanStream({ match: pattern })) {
+    result.push(key);
+  }
+  return result;
+};

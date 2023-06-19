@@ -1,4 +1,5 @@
 const User = require("../models/UserModel");
+const { getAllNftHashes } = require("../config/redis-connect");
 exports.createCart = async (req, res) => {
   try {
     const user = await User.findOne({ addressWallet: req.body.addressWallet });
@@ -37,6 +38,14 @@ exports.deleteAllCart = async (req, res) => {
     await user.save();
     res.status(200).json({ success: true });
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+exports.getAllProduct = async (req, res) => {
+  try {
+    const products = await getAllNftHashes();
+    res.status(200).json({ success: true, products: products });
+  } catch (error) {
     res.status(500).json({ error: err.message });
   }
 };
