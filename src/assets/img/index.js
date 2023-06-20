@@ -60,7 +60,11 @@ import transferEther from "./ethereTransfer.gif";
 import avatar from "./avatar.png";
 import file from "./file.png";
 import music_ava from "./music_ava.png"
+import nft_music from "./nft-music.png";
+import nft_video from "./nft-video.png";
 export default {
+  nft_video,
+  nft_music,
   music_ava,
   file,
   avatar,

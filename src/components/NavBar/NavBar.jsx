@@ -85,13 +85,41 @@ const NavBar = () => {
   };
 
   useEffect(() => {
-    const handleClick = () => {
+    const handleClick = (event) => {
       const navbar = document.querySelector(".NavBar_navbar__tQ7C9");
+      const discover = document.querySelector(
+        ".NavBar_navbar_container_right_discover_box__APtSP"
+      );
+      const listhelp = document.querySelector(
+        ".NavBar_navbar_container_right_help_box__fZWpP"
+      );
+      const page = document.querySelector(
+        ".NavBar_navbar_container_right_discover__tUkZI"
+      );
+      const help = document.querySelector(
+        ".NavBar_navbar_container_right_help__1YuG2"
+      );
+
+
       if (!navbar.contains(event.target)) {
         setDiscover(false);
         setHelp(false);
         setNotification(false);
         setProfile(false);
+      } else if (page.contains(event.target)) {
+        if (discover.contains(event.target)) {
+          setDiscover(false);
+          setHelp(false);
+          setNotification(false);
+          setProfile(false);
+        }
+      } else if (help.contains(event.target)) {
+        if (listhelp.contains(event.target)) {
+          setDiscover(false);
+          setHelp(false);
+          setNotification(false);
+          setProfile(false);
+        }
       }
     };
 
@@ -227,7 +255,12 @@ const NavBar = () => {
               deleteAllCart={deleteAllCart}
               buyNFT={buyNFT}
             />
-            {notification && <div className={Style.overlay} onClick={() => openNotification()}></div>}
+            {notification && (
+              <div
+                className={Style.overlay}
+                onClick={() => openNotification()}
+              ></div>
+            )}
           </div>
         </div>
       </div>

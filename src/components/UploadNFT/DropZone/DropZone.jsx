@@ -93,13 +93,6 @@ const DropZone = ({
         );
       case "audio":
         return (
-          // <Image
-          //     className={Style.image}
-          //     src={fileAva}
-          //     alt="nft image"
-          //     width={200}
-          //     height={200}
-          //   />
           <Image
             className={Style.image}
             src={fileAva}

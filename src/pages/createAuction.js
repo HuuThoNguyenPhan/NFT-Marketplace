@@ -13,11 +13,6 @@ const createAuction = () => {
   const { changeCurrency, createAuction } = useContext(NFTMarketplaceContext);
   let [priceVND, setPriceVND] = useState("");
   const [price, setPrice] = useState("");
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [fileSize, setFileSize] = useState("");
-  const [limit, setLimit] = useState(1);
-  const [image, setImage] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const router = useRouter();
   const [tokenId, setTokenId] = useState("");
@@ -34,13 +29,20 @@ const createAuction = () => {
     });
   }, [router.isReady]);
 
+  const handlePrice = (e) => {
+    const regex = /^$|^\d{0,11}(\.\d{0,4})?$/;
+    if (regex.test(e.target.value) && e.target.value.toString().length < 16) {
+      setInitialPrice(e.target.value);
+    }
+  };
+
   return (
     <div className={Style.uploadNFT}>
       <div className={Style.uploadNFT_box}>
         <div className={Style.uploadNFT_box_form}>
           <div className={Style.upload}>
             <div className={Style.upload_box}>
-              <h1 style={{ fontSize: 49, fontWeight: 700}}>
+              <h1 style={{ fontSize: 49, fontWeight: 700 }}>
                 Tạo phiên đấu giá sản phẩm NFT
               </h1>
               <div className={Style.reSellToken_box_image}>
@@ -61,7 +63,6 @@ const createAuction = () => {
                   value={router.query.name}
                   readOnly
                   className={formStyle.Form_box_input_userName}
-                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
 
@@ -75,6 +76,7 @@ const createAuction = () => {
                   value={router.query.description}
                   placeholder="Hãy miêu tả sản phẩm một ít ..."
                   onChange={(e) => setDescription(e.target.value)}
+                  readOnly
                 ></textarea>
                 <p>
                   Mô tả sẽ được đưa vào trang chi tiết của sản phẩm, bên dưới
@@ -118,11 +120,10 @@ const createAuction = () => {
                       <AiTwotonePropertySafety />
                     </div>
                     <input
-                      type="number"
+                      value={initialPrice}
                       placeholder={"1 ETH ≈ " + priceVND || ""}
                       onChange={(e) => {
-                        setInitialPrice(e.target.value);
-                        console.log(e.target.value);
+                        handlePrice(e);
                       }}
                     />
                   </div>

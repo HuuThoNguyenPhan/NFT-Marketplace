@@ -122,7 +122,7 @@ const FollowerTab = ({ TopCreator }) => {
               <RiUserFollowFill /> Tài sản
             </button>
             <button onClick={() => openFollower()}>
-              <RiUserFollowFill /> Tho dõi
+              <RiUserFollowFill /> Theo dõi
             </button>
             <button onClick={() => openNews()}>
               <RiAwardLine /> NoteWorthy

@@ -64,12 +64,11 @@ const NFTCardTwo = ({ NFTData }) => {
             />
           </div>
         );
-        break;
       case "audio":
         return (
           <div className={Style.NFTCardTwo_box_img}>
             <Image
-              src={images.creatorbackground10}
+              src={images.nft_music}
               alt="nft image"
               width={400}
               height={350}
@@ -84,14 +83,12 @@ const NFTCardTwo = ({ NFTData }) => {
             </audio>
           </div>
         );
-        break;
       case "video":
         return (
           <video className={Style.NFTCardTwo_box_video} controls>
             <source src={fileUrl} type="video/mp4" />
           </video>
         );
-        break;
       default:
         return (
           <div className={Style.NFTCardTwo_box_img}>

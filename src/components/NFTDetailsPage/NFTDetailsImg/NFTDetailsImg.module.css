@@ -1,23 +1,24 @@
-
-
-.NFTDetailsImg{
+.NFTDetailsImg {
     width: 100%;
 }
 
-.NFTDetailsImg_box_NFT{
+.NFTDetailsImg_box_NFT {
     display: grid;
 }
 
-.NFTDetailsImg_box_NFT_img{
+.NFTDetailsImg_box_NFT_img {
     grid-column: 1 / -1;
     grid-row: 1 / end;
-}
-
-.NFTDetailsImg_box_NFT_img_img{
     border-radius: 1rem;
+    border: 1px solid var(--icons-bg-color);
 }
 
-.NFTDetailsImg_box_NFT_like{
+.NFTDetailsImg_box_NFT_img_img {
+    border-radius: 1rem;
+    background-color: red;
+}
+
+.NFTDetailsImg_box_NFT_like {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -28,7 +29,7 @@
     padding-inline: 2rem;
 }
 
-.NFTDetailsImg_box_NFT_like p{
+.NFTDetailsImg_box_NFT_like p {
     background-color: var(--icons-color);
     padding: .2rem 1rem;
     color: var(--main-bg-color);
@@ -39,33 +40,56 @@
     cursor: pointer;
 }
 
-.NFTDetailsImg_box_NFT_like_icon{
+.NFTDetailsImg_box_NFT_like_icon {
     font-size: 1.4rem;
 }
 
 .NFTDetailsImg_box_details,
-.NFTDetailsImg_box_description{
+.NFTDetailsImg_box_description {
     display: flex;
     align-items: center;
     justify-content: space-between;
     line-height: 0;
+    font-size: 1.3rem;
     background-color: var(--icons-bg-color);
     border-radius: .5rem;
     padding-inline: 1rem;
     cursor: pointer;
     margin-top: 1rem;
-    color: var( --icons-color);
+    color: var(--icons-color);
     font-weight: 600;
 }
 
 .NFTDetailsImg_box_details_box,
-.NFTDetailsImg_box_description_box{
+.NFTDetailsImg_box_description_box {
     padding: .1rem 1rem;
-    font-size: 1rem;
-    word-break: break-word
+    font-size: 1.3rem;
+    word-break: break-word;
+    line-height:1.5rem;
+    font-family: __Poppins_98ef6d
 }
 
-.NFTDetailsImg_box_details_box p{
-    line-height: 1;
+.NFTDetailsImg_box_details_box {
+    line-height:1rem;
     font-size: 1rem;
+    font-size: 1.3rem;
+    word-break: break-word;
+    line-height:21px;
+    font-family: __Poppins_98ef6d
+}
+
+.image_audio {
+    position: relative;
+}
+
+.audio {
+    display: inline-block;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border: none;
+    width: 100%;
+    position: absolute;
+    bottom: 0.25rem;
+    z-index: 111;
 }

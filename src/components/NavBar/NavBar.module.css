@@ -64,14 +64,12 @@
     /* align-self: flex-end; */
 }
 
-.navbar_container_right_discover {
+.navbar_container_right_discover, .navbar_container_right_help{
     position: relative;
     cursor: pointer;
 }
-
-.navbar_container_right_help {
-    position: relative;
-    cursor: pointer;
+.navbar_container_right_discover p:hover, .navbar_container_right_help p:hover{
+    color: rgb(131, 128, 128);
 }
 
 .navbar_container_right_help p {

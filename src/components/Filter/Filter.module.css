@@ -20,7 +20,8 @@
 }
 
 .filter_box_left button{
-    padding: 1rem 1.5rem;
+    white-space: nowrap;
+    padding: 1rem 2rem;
     border-radius: 2rem;
     border:  1px solid var(--main-bg-color);
     transition: all .3s ease-in;
@@ -102,7 +103,7 @@
     }
 
     .filter_box_left button{
-        padding: .2rem;
+        padding: 1rem 2rem;
     }
 
     .filter_box_items{
@@ -141,7 +142,7 @@
     }
 
     .filter_box_left button{
-        padding: 1rem;
+        padding-inline: 2rem ;
     }
 
     .filter_box_items{

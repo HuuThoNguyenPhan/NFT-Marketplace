@@ -25,7 +25,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "not_verified",
   },
-  image: { type: Array },
   cart: [
     {
       tokenId: {
@@ -51,7 +50,6 @@ const userSchema = new mongoose.Schema({
       }
     },
   ],
-  country: { type: String },
   createdAt: {
     type: Date,
     default: Date.now(),

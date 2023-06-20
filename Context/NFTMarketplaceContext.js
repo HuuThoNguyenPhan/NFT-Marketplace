@@ -46,8 +46,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
     description,
     reason,
     contact,
-    image,
-    country
   ) => {
     const bodyContent = {
       _id: idAccount,
@@ -55,8 +53,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
       description,
       reason,
       contact,
-      image,
-      country,
     };
 
     const response = await axios.put(
@@ -140,17 +136,16 @@ export const NFTMarketplaceProvider = ({ children }) => {
       currency: "VND",
     });
     let finalPrice = "";
-    if(res2.data.new_amount.toString().length > 15){
-      finalPrice = formatPrice(res2.data.new_amount,15) + " VNĐ";
-    }else{
+    if (res2.data.new_amount.toString().length > 15) {
+      finalPrice = formatPrice(res2.data.new_amount, 15) + " VNĐ";
+    } else {
       finalPrice = VND.format(res2.data.new_amount).replace("₫", "VNĐ");
     }
-    
 
-    return formatPrice(finalPrice,10);
+    return formatPrice(finalPrice, 10);
   };
 
-  function formatPrice(price,length) {
+  function formatPrice(price, length) {
     if (price.toString().length > length) {
       if (price >= 1000000000) {
         return (price / 1000000000).toFixed(3) + "B";
@@ -322,9 +317,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
       !limit ||
       !royalties ||
       !topics
-    )
+    ){
       return setError("Bạn chưa nhập đủ thông tin"), setOpenError(true);
 
+    }else if(price == 0){
+      return setError("Nhập giá lớn hơn 0"), setOpenError(true);
+    }
     const sleep = (ms) => {
       return new Promise((resolve) => setTimeout(resolve, ms));
     };
@@ -393,6 +391,22 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const createAuction = async (tokenId, initialPrice, startTime, endTime) => {
     try {
+      if (!tokenId || !initialPrice || !startTime || !endTime) {
+        setError("Vui lòng đầy đủ thông tin!");
+        setOpenError(true);
+        return;
+      } else if (
+        new Date(startTime).getTime() < new Date().getTime() ||
+        new Date(endTime).getTime() < new Date().getTime()
+      ) {
+        setError("Thời gian bắt đầu và thời gian kết thúc phải lớn hơn thời gian hiện tại!");
+        setOpenError(true);
+        return;
+      } else if (new Date(startTime).getTime() > new Date(endTime).getTime()) {
+        setError("Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc!");
+        setOpenError(true);
+        return;
+      }
       const price = ethers.utils.parseEther(initialPrice.toString());
       const provider = new ethers.providers.JsonRpcProvider();
       const contract = await connectingWithSmartContract(fetchAuctionContract);
@@ -447,7 +461,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
       if (type == false) {
         await axios.request(req);
       }
-      window.location.reload();
+      router.push("/author")
     } catch (error) {
       setError("Lỗi khi hủy đấu giá");
       setOpenError(true);
@@ -455,8 +469,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
 
-  const joinAuction = async (auctionId, bid) => {
+  const joinAuction = async (auctionId, bid, conBid) => {
     try {
+      if(bid == 0){
+        return setError("Nhập giá lớn hơn 0"), setOpenError(true);
+      }else if(bid < conBid){
+        return setError("Giá cược không hợp lệ"), setOpenError(true);
+      }
       const price = ethers.utils.parseEther(bid.toString());
       const contract = await connectingWithSmartContract(fetchAuctionContract);
       const transaction = await contract.joinAuction(auctionId, price, {
@@ -464,7 +483,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
       });
       await transaction.wait();
     } catch (error) {
-      setError("Lỗi khi tham gia đấu giá");
+      setError("Bạn đã từ chối đấu giá");
       setOpenError(true);
       console.log(error);
     }
@@ -666,7 +685,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
         data: bodyContent,
       };
       let response = await axios.request(reqOptions);
-      console.log(response.data);
     } catch (err) {
       console.log(err);
     }
@@ -971,7 +989,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
               limit,
               royalties: royalties.toNumber(),
               author,
-              createAt
+              createAt,
             };
           }
         )
@@ -991,6 +1009,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   //---BUY NFTs FUNCTION
   const buyNFT = async (nft, limit, cartLenght, deleteCart) => {
+    if (limit == "") {
+      setError("Vui lòng nhập số lượng mua!");
+      setOpenError(true);
+      return;
+    }
     try {
       const contract = await connectingWithSmartContract(fetchContract);
       const time = nft.name + new Date().getTime();
@@ -1236,7 +1259,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         deleteAllCart,
         fetchContentReports,
         sendReport,
-        formatPrice
+        formatPrice,
       }}
     >
       {children}

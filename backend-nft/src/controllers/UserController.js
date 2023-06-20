@@ -1,9 +1,14 @@
 const User = require("../models/UserModel");
-const Address = require("../models/address")
+const Address = require("../models/address");
+const sendMail = require("../utils/sendMail");
 exports.createUser = async (req, res) => {
   try {
     const { address } = req.body;
-    let user = await User.findOneAndUpdate({ addressWallet: address }, {}, { upsert: true, new: true });
+    let user = await User.findOneAndUpdate(
+      { addressWallet: address },
+      {},
+      { upsert: true, new: true }
+    );
 
     res.status(201).json({
       success: true,
@@ -28,12 +33,14 @@ exports.getAllUser = async (req, res) => {
 };
 
 exports.changeVerified = async (req, res) => {
-  try {
-    const { _id, verified } = req.body;
-    const user = await User.findOne({ _id });
 
+  try {
+    const {addressWallet, verified, message } = req.body;
+    const user = await User.findOne({ addressWallet});
     if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     if (user.verified === verified) {
@@ -42,20 +49,30 @@ exports.changeVerified = async (req, res) => {
 
     const updateObj = { verified };
     const unsetObj = {};
-
     if (verified === "not_verified") {
       unsetObj.name = "";
-        unsetObj.description = "";
-        unsetObj.reason = "";
-        unsetObj.contact = "";
-        unsetObj.country = "";
-        unsetObj.image = [];
-        unsetObj.updatedAt = "";
+      unsetObj.description = "";
+      unsetObj.reason = "";
+      unsetObj.contact = "";
+      unsetObj.updatedAt = "";
     }
+
     if (Object.keys(unsetObj).length > 0) {
-      await User.updateOne({ _id }, { $set: updateObj, $unset: unsetObj });
+
+      await sendMail({
+        email: user.contact,
+        subject: `Kết quả xác thực tài khoản`,
+        message,
+      });
+      await User.updateOne({ addressWallet }, { $set: updateObj, $unset: unsetObj });
     } else {
-      await User.updateOne({ _id }, { $set: updateObj });
+      await sendMail({
+        email: user.contact,
+        subject: `Kết quả xác thực tài khoản`,
+        message: "Chúc mừng bạn đã xác thực thành công!",
+      });
+
+      await User.updateOne({ addressWallet }, { $set: updateObj });
     }
 
     res.status(200).json({ success: true });
@@ -70,7 +87,6 @@ exports.updateUser = async (req, res) => {
     const user = await User.findById(_id).lean();
 
     if (user.verified == "waitting") {
-      
       res.status(200).json({
         success: false,
         message: "Tài khoản đang chờ xét duyệt",
@@ -83,10 +99,7 @@ exports.updateUser = async (req, res) => {
         (Date.now() - user.updatedAt.getTime()) / (1000 * 60 * 60 * 24)
       );
       if (name && (dateDiff <= 0 || dateDiff > 90)) {
-        await User.updateOne(
-          { _id },
-          { ...req.body, updatedAt: Date.now() }
-        );
+        await User.updateOne({ _id }, { ...req.body, updatedAt: Date.now() });
       } else if (name) {
         res.status(200).json({
           success: false,
@@ -108,7 +121,7 @@ exports.updateUser = async (req, res) => {
 
 exports.getUserDetails = async (req, res) => {
   try {
-    const {addressWallet} = req.params;
+    const { addressWallet } = req.params;
     const user = await User.findOne({ addressWallet }).lean();
 
     res.status(200).json({
@@ -123,7 +136,10 @@ exports.getUserDetails = async (req, res) => {
 exports.addressUpdate = async (req, res) => {
   try {
     const data = req.body;
-    const add = await Address.updateOne({_id:"646b745a80a41c027c2ba7bd"},{...data})
+    const add = await Address.updateOne(
+      { _id: "646b745a80a41c027c2ba7bd" },
+      { ...data }
+    );
 
     res.status(200).json({
       success: true,
@@ -131,17 +147,17 @@ exports.addressUpdate = async (req, res) => {
   } catch (err) {
     res.send(err);
   }
-}
+};
 
 exports.getAddress = async (req, res) => {
   try {
-    const add = await Address.findById("646b745a80a41c027c2ba7bd")
+    const add = await Address.findById("646b745a80a41c027c2ba7bd");
 
     res.status(200).json({
       success: true,
-      address: add
+      address: add,
     });
   } catch (err) {
     res.send(err);
   }
-}
+};

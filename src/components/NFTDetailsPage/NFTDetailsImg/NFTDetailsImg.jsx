@@ -48,21 +48,38 @@ const NFTDetailsImg = ({ nft }) => {
             objectFit="contain"
           />
         );
-        break;
+
       case "audio":
         return (
-          <audio controls style={{ margin: "0 auto" }}>
-            <source src={fileUrl} />
-          </audio>
+          <div className={Style.image_audio}>
+            <Image
+              src={images.nft_music}
+              alt="nft image"
+              width={700}
+              height={800}
+              objectFit="cover"
+            />
+            <audio
+              className={Style.audio}
+              controls
+              style={{ margin: "0 auto" }}
+            >
+              <source src={fileUrl} />
+            </audio>
+          </div>
         );
-        break;
+
       case "video":
         return (
-          <video width="100%" height="100%" controls style={{ margin: "0 auto" }}>
+          <video
+            width="100%"
+            height="100%"
+            controls
+            style={{ margin: "0 auto" }}
+          >
             <source src={fileUrl} type="video/mp4" />
           </video>
         );
-        break;
       default:
         return (
           <Image
@@ -81,21 +98,6 @@ const NFTDetailsImg = ({ nft }) => {
     <div className={Style.NFTDetailsImg}>
       <div className={Style.NFTDetailsImg_box}>
         <div className={Style.NFTDetailsImg_box_NFT}>
-          <div className={Style.NFTDetailsImg_box_NFT_like}>
-            <p onClick={() => likeNFT()}>
-              {like ? (
-                <AiOutlineHeart
-                  className={Style.NFTDetailsImg_box_NFT_like_icon}
-                />
-              ) : (
-                <AiFillHeart
-                  className={Style.NFTDetailsImg_box_NFT_like_icon}
-                />
-              )}
-              <span>23</span>
-            </p>
-          </div>
-
           <div className={Style.NFTDetailsImg_box_NFT_img}>
             {renderPreview(nft.typeFile, nft.image)}
             {/* <Image
@@ -119,7 +121,7 @@ const NFTDetailsImg = ({ nft }) => {
 
         {description && (
           <div className={Style.NFTDetailsImg_box_description_box}>
-            <p align="justify" >{nft.description}</p>
+            <p align="justify">{nft.description}</p>
           </div>
         )}
 
@@ -133,7 +135,7 @@ const NFTDetailsImg = ({ nft }) => {
 
         {details && (
           <div className={Style.NFTDetailsImg_box_details_box}>
-            <small>2000 x 2000 px.IMAGE({nft.size}MB)</small>
+            <small>{nft.typeFile} ({nft.size}MB)</small>
             <p>
               <small>Địa chỉ hợp đồng:</small>
               <br></br>

@@ -28,22 +28,6 @@ const UploadProfile = () => {
 
   return (
     <div className={Style.upload}>
-      <div className={Style.dropZone}>
-        <DropZone
-          title="Ảnh đại diện: JPG, PNG"
-          heading="Kéo và thả tệp"
-          subHeading="hoặc tải tệp lên từ thiết bị của bạn"
-          name={name}
-          website={website}
-          description={description}
-          country={country}
-          setFileSize={setFileSize}
-          setImage={setImage}
-          fileSize={fileSize}
-          image={image}
-        />
-      </div>
-
       <div className={Style.upload_box}>
         <div className={formStyle.Form_box_input}>
           <label htmlFor="name">Tên người dùng</label>
@@ -81,15 +65,6 @@ const UploadProfile = () => {
         </div>
         <div className={formStyle.Form_box_input_social}>
           <div className={formStyle.Form_box_input}>
-            <label htmlFor="Country">Quốc gia</label>
-            <div className={formStyle.Form_box_input_box}>
-              <div className={formStyle.Form_box_input_box_icon}>
-                <TiFlag />
-              </div>
-              <input type="text" onChange={(e) => setCountry(e.target.value)} />
-            </div>
-          </div>
-          <div className={formStyle.Form_box_input}>
             <label htmlFor="email">Email</label>
             <div className={formStyle.Form_box_input_box}>
               <div className={formStyle.Form_box_input_box_icon}>
@@ -112,8 +87,6 @@ const UploadProfile = () => {
                 description,
                 reason,
                 contact,
-                image,
-                country
                 // website,
                 // royalties,
                 // fileSize,

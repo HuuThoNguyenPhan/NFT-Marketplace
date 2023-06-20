@@ -37,6 +37,21 @@
     transform: translateX(-50%);
 }
 
+.image_audio{
+    position: relative;
+}
+
+.audio{
+    display: inline-block;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border: none;
+    width: 100%;
+    position: absolute;
+    bottom: 0.25rem;
+    z-index: 111;
+}
 @media screen and (max-width: 35em) {
     .reSellToken_box {
         width: 90%;

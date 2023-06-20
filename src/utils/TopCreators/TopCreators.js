@@ -13,7 +13,7 @@ export const getTopCreators = (creators) => {
     const seller = item[0];
     const total = item[1]
       .map((newItem) => Number(newItem.price))
-      .reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+      .reduce((previousValue, currentValue) => previousValue + currentValue, 0).toFixed(4);
 
     finalCreators.push({ seller, total });
   });

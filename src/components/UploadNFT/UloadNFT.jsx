@@ -24,14 +24,19 @@ const UloadNFT = ({ createNFT }) => {
   const [openTopic, setOpenTopic] = useState(false);
   const [topics, setTopics] = useState([]);
 
-  const handleNumber = (e, setState) => {
-    setState(() => {
-      e.target.value = e.target.value.replace(" ", "");
-      return Number.isInteger(Number(e.target.value)) &&
-        Number(e.target.value) >= 0
-        ? e.target.value.replace(".", "")
-        : 1;
-    });
+  const handleNumber = (e, setState, check) => {
+    const regex = /^$|^[1-9]\d*$/;
+    if (e.target.value < 5 && regex.test(e.target.value)) {
+      if (check) {
+        if (e.target.value == "" || quantity + 1 > e.target.value) {
+          setState(e.target.value);
+        }
+      } else {
+        if (e.target.value == "" || limit < e.target.value + 1) {
+          setState(e.target.value);
+        }
+      }
+    }
   };
 
   const handleText = (e, set, length, end) => {
@@ -59,8 +64,10 @@ const UloadNFT = ({ createNFT }) => {
     });
   }, []);
   const handlePrice = (e) => {
-    const regex = /^\d{0,15}(\.\d{1,})?$/;
-    return regex.test(e.target.value);
+    const regex = /^$|^\d{0,11}(\.\d{0,4})?$/;
+    if (regex.test(e.target.value) && e.target.value.toString().length < 16) {
+      setPrice(e.target.value);
+    }
   };
   const handelOpen = () => {
     setOpenTopic(true);
@@ -80,6 +87,12 @@ const UloadNFT = ({ createNFT }) => {
     });
   };
 
+  const hanldeRoyalty = (e) => {
+    const regex = /^$|^([1-9]|1\d|20)$/;
+    if (regex.test(e.target.value)) {
+      setRoyalties(e.target.value);
+    }
+  };
   return (
     <div className={Style.upload}>
       <DropZone
@@ -157,24 +170,22 @@ const UloadNFT = ({ createNFT }) => {
                 <AiTwotonePropertySafety />
               </div>
               <input
-                type="number"
+                value={price}
                 placeholder={"1 ETH ≈ " + priceVND || ""}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => handlePrice(e)}
               />
             </div>
           </div>
 
           <div className={formStyle.Form_box_input}>
-            <label htmlFor="Quantity">Số lượng</label>
+            <label htmlFor="Quantity">Số lượng ≤ 4</label>
             <div className={formStyle.Form_box_input_box}>
               <div className={formStyle.Form_box_input_box_icon}>
                 <AiTwotonePropertySafety />
               </div>
               <input
-                type="number"
                 value={quantity}
-                min={1}
-                onChange={(e) => handleNumber(e, setQuantity)}
+                onChange={(e) => handleNumber(e, setQuantity, false)}
               />
             </div>
           </div>
@@ -186,19 +197,12 @@ const UloadNFT = ({ createNFT }) => {
                 <AiTwotonePropertySafety />
               </div>
               <input
-                type="number"
+                placeholder=""
                 value={limit}
-                onChange={(e) =>
-                  setLimit(() => {
-                    if (e.target.value > quantity) {
-                      return quantity;
-                    } else {
-                      return e.target.value;
-                    }
-                  })
-                }
+                onChange={(e) => handleNumber(e, setLimit, true)}
               />
             </div>
+            <span>Giới hạn một lần mua ≤ số lượng</span>
           </div>
 
           <div className={formStyle.Form_box_input}>
@@ -210,7 +214,8 @@ const UloadNFT = ({ createNFT }) => {
               <input
                 type="text"
                 placeholder="20%"
-                onChange={(e) => setRoyalties(e.target.value)}
+                value={royalties}
+                onChange={(e) => hanldeRoyalty(e)}
               />
             </div>
           </div>

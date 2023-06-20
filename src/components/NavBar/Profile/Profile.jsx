@@ -25,8 +25,8 @@ const Profile = ({ currentAccount, openCart }) => {
         <div ref={avatarRef}></div>
 
         <div className={Style.profile_account_info}>
-          <p>Shoaib Bhai</p>
-          <small>{currentAccount.slice(0, 18)}..</small>
+          <p>User_{currentAccount.slice(currentAccount.length - 4)}</p>
+          <small>{currentAccount.slice(0, 3)}...{currentAccount.slice(currentAccount.length-4, currentAccount.length)}</small>
         </div>
       </div>
 

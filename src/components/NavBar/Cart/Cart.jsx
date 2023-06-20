@@ -3,7 +3,7 @@ import Image from "next/image";
 import { FiTrash2 } from "react-icons/fi";
 //INTERNAL IMPORT
 import Style from "./Cart.module.css";
-
+import images from "../../../assets/img";
 const Cart = ({
   isOpen,
   fetchUserCart,
@@ -34,6 +34,40 @@ const Cart = ({
     });
   };
 
+  const renderImage = (type,item) => {
+    switch (type) {
+      case "image":
+        return (
+          <Image
+            src={item.image}
+            alt="ảnh sản phẩm"
+            width={60}
+            height={60}
+            className={Style.cart_box_img}
+          />
+        );
+      case "video":
+        return (
+          <Image
+            src={images.nft_video}
+            alt="ảnh sản phẩm"
+            width={60}
+            height={60}
+            className={Style.cart_box_img}
+          />
+        );
+      default:
+        return (
+          <Image
+            src={images.file}
+            alt="ảnh sản phẩm"
+            width={60}
+            height={60}
+            className={Style.cart_box_img}
+          />
+        );
+    }
+  };
   const payment = async () => {
     for (let i = 0; i < cart.length; i++) {
       const nft = {
@@ -42,9 +76,9 @@ const Cart = ({
         price: cart[i].price,
         tokenId: cart[i].tokenId,
       };
-      if(i == cart.length - 1){
+      if (i == cart.length - 1) {
         await buyNFT(nft, 1, false, true);
-      }else{
+      } else {
         await buyNFT(nft, 1, true, false);
       }
     }
@@ -64,15 +98,7 @@ const Cart = ({
           </div>
           {cart.map((item) => (
             <div className={Style.cart_box}>
-              <div className={Style.cart_box_img}>
-                <Image
-                  src={item.image}
-                  alt="ảnh sản phẩm"
-                  width={60}
-                  height={60}
-                  className={Style.cart_box_img}
-                />
-              </div>
+              {renderImage(item.typeFile,item)}
               <div className={Style.cart_box_info}>
                 <h4>{item.name}</h4>
                 <p>
@@ -80,7 +106,7 @@ const Cart = ({
                 </p>
                 <small>{item.royalties}</small>
               </div>
-              <span className={Style.cart_box_price}>{item.price} ETH</span>
+              <span className={Style.cart_box_price}>{item.price} {item.price !== "Đã bán" && "ETH"}</span>
               <span
                 className={Style.cart_box_detete}
                 onClick={() => handelDelete(item.tokenId)}
@@ -92,19 +118,23 @@ const Cart = ({
           <hr />
           <div className={Style.cart_box_fearture}>
             <h3>Tổng tiền</h3>
-            <p>{cart.reduce((a, b) => a + b.price, 0)} ETH</p>
+            <p>{cart.reduce((a, b) => a + (b.price !== "Đã bán" && b.price), 0)} ETH</p>
           </div>
         </div>
       )}
 
-      <button
-        className={Style.btnBuy}
-        onClick={() => {
-          payment();
-        }}
-      >
-        Thanh toán
-      </button>
+      {cart != undefined && cart.length != 0 ? (
+        <button
+          className={Style.btnBuy}
+          onClick={() => {
+            payment();
+          }}
+        >
+          Thanh toán
+        </button>
+      ) : (
+        <button className={Style.btnBuy_notActive}>Thanh toán</button>
+      )}
     </div>
   );
 };
