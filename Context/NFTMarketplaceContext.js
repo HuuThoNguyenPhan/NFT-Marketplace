@@ -41,12 +41,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const router = useRouter();
 
-  const credential = async (
-    name,
-    description,
-    reason,
-    contact,
-  ) => {
+  const credential = async (name, description, reason, contact) => {
     const bodyContent = {
       _id: idAccount,
       name,
@@ -317,10 +312,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
       !limit ||
       !royalties ||
       !topics
-    ){
+    ) {
       return setError("Bạn chưa nhập đủ thông tin"), setOpenError(true);
-
-    }else if(price == 0){
+    } else if (price == 0) {
       return setError("Nhập giá lớn hơn 0"), setOpenError(true);
     }
     const sleep = (ms) => {
@@ -366,12 +360,15 @@ export const NFTMarketplaceProvider = ({ children }) => {
     royalties
   ) => {
     try {
+
+
       const price = ethers.utils.parseUnits(formInputPrice.toString(), "ether");
 
       const contract = await connectingWithSmartContract(fetchContract);
 
       const listingPrice = await contract.getListingPrice();
-
+      console.log(formInputPrice.toString())
+      
       const transaction = !isReselling
         ? await contract.createToken(url, price, royalties, isAuction, {
             value: listingPrice.toString(),
@@ -399,7 +396,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
         new Date(startTime).getTime() < new Date().getTime() ||
         new Date(endTime).getTime() < new Date().getTime()
       ) {
-        setError("Thời gian bắt đầu và thời gian kết thúc phải lớn hơn thời gian hiện tại!");
+        setError(
+          "Thời gian bắt đầu và thời gian kết thúc phải lớn hơn thời gian hiện tại!"
+        );
         setOpenError(true);
         return;
       } else if (new Date(startTime).getTime() > new Date(endTime).getTime()) {
@@ -461,7 +460,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
       if (type == false) {
         await axios.request(req);
       }
-      router.push("/author")
+      router.push("/author");
     } catch (error) {
       setError("Lỗi khi hủy đấu giá");
       setOpenError(true);
@@ -471,9 +470,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
   const joinAuction = async (auctionId, bid, conBid) => {
     try {
-      if(bid == 0){
+      if (bid == 0) {
         return setError("Nhập giá lớn hơn 0"), setOpenError(true);
-      }else if(bid < conBid){
+      } else if (bid < conBid) {
         return setError("Giá cược không hợp lệ"), setOpenError(true);
       }
       const price = ethers.utils.parseEther(bid.toString());
@@ -825,72 +824,16 @@ export const NFTMarketplaceProvider = ({ children }) => {
   //--FETCHNFTS FUNCTION
   const fetchNFTs = async () => {
     try {
-      const provider = new ethers.providers.JsonRpcProvider();
+      var config = {
+        method: "get",
+        url: "http://localhost:5000/api/v1/getAllproductFromRedis",
+        headers: {
+          // Authorization: "Bearer " + JWT,
+        },
+      };
 
-      const contract = await fetchContract(provider);
-      const contract2 = await fetchFactoryContract(provider);
-      const data = await contract.fetchMarketItems();
-      const items = await Promise.all(
-        data.map(
-          async ({
-            tokenId,
-            seller,
-            owner,
-            price: unformattedPrice,
-            royalties,
-            author,
-          }) => {
-            const tokenURI = await contract2.tokenURI(tokenId);
-            const id = tokenURI.slice(38, tokenURI.length);
-            var config = {
-              method: "get",
-              url: "http://localhost:5000/api/v1/products/" + id,
-              headers: {
-                // Authorization: "Bearer " + JWT,
-              },
-            };
-
-            const res = await axios(config);
-            const price = ethers.utils.formatUnits(
-              unformattedPrice.toString(),
-              "ether"
-            );
-            const metaData = res.data.products;
-            const name = metaData.name;
-            const description = metaData.description;
-            const typeFile = metaData.typeFile;
-            const breed = metaData.breed;
-            const size = metaData.size;
-            const limit = metaData.limit;
-            const image =
-              "https://gateway.pinata.cloud/ipfs/" +
-              metaData.image.slice(7, metaData.image.length);
-            const only = metaData.only;
-            const createAt = new Date(metaData.createAt).toLocaleDateString();
-            return {
-              price,
-              tokenId: tokenId.toNumber(),
-              royalties: royalties.toNumber(),
-              seller,
-              owner,
-              image,
-              name,
-              description,
-              tokenURI,
-              typeFile,
-              breed,
-              size,
-              limit,
-              author,
-              only,
-              createAt,
-            };
-          }
-        )
-      );
-
-      console.log(items);
-      return items;
+      const res = await axios(config);
+      return res.data.products;
     } catch (error) {
       console.log(error);
       setError("Error while fetching NFTS");
@@ -925,78 +868,25 @@ export const NFTMarketplaceProvider = ({ children }) => {
   };
 
   //--FETCHING MY NFT OR LISTED NFTs
-  const fetchMyNFTsOrListedNFTs = async (type, address) => {
+  const fetchMyNFTsOrListedNFTs = async (type, addressWallet) => {
     try {
-      const contract = await connectingWithSmartContract(fetchContract);
+      console.log(addressWallet);
+      let url = "";
+      type != "fetchItemsListed"
+        ? (url = `http://localhost:5000/api/v1/getMyproductFromRedis/${addressWallet}`)
+        : (url = `http://localhost:5000/api/v1/getListedFromRedis/${addressWallet}`);
+      console.log(url);
+      var config = {
+        method: "get",
+        url: url,
+        headers: {
+          // Authorization: "Bearer " + JWT,
+        },
+      };
 
-      const data =
-        type == "fetchItemsListed"
-          ? await contract.fetchItemsListed(address)
-          : await contract.fetchMyNFTs(address);
+      const res = await axios(config);
 
-      const provider = new ethers.providers.JsonRpcProvider();
-      const contract2 = await fetchFactoryContract(provider);
-      const items = await Promise.all(
-        data.map(
-          async ({
-            tokenId,
-            seller,
-            owner,
-            price: unformattedPrice,
-            royalties,
-            author,
-          }) => {
-            const tokenURI = await contract2.tokenURI(tokenId);
-            const id = tokenURI.slice(38, tokenURI.length);
-            var config = {
-              method: "get",
-              url: "http://localhost:5000/api/v1/products/" + id,
-              headers: {
-                // Authorization: "Bearer " + JWT,
-              },
-            };
-
-            const res = await axios(config);
-
-            const metaData = res.data.products;
-            const name = metaData.name;
-            const description = metaData.description;
-            const typeFile = metaData.typeFile;
-            const size = metaData.size;
-            const limit = metaData.limit;
-            // const image = "https://ipfs.io/ipfs/" + metaData.image.slice(7,metaData.image.length);
-            const image =
-              "https://gateway.pinata.cloud/ipfs/" +
-              metaData.image.slice(7, metaData.image.length);
-            const price = ethers.utils.formatUnits(
-              unformattedPrice.toString(),
-              "ether"
-            );
-            const breed = metaData.breed;
-            const createAt = new Date(metaData.createAt).toLocaleDateString();
-            return {
-              price,
-              tokenId: tokenId.toNumber(),
-              seller,
-              owner,
-              image,
-              name,
-              description,
-              tokenURI,
-              typeFile,
-              breed,
-              size,
-              limit,
-              royalties: royalties.toNumber(),
-              author,
-              createAt,
-            };
-          }
-        )
-      );
-
-      console.log(items);
-      return items;
+      return res.data.products;
     } catch (error) {
       setError("Error while fetching listed NFTs");
       setOpenError(true);

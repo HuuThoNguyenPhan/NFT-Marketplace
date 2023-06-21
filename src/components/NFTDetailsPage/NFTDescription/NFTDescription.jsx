@@ -491,6 +491,7 @@ const NFTDescription = ({ nft, lastBid, lastBidder }) => {
                             nft.name,
                             nft.price,
                             nft.typeFile,
+                            nft.image,
                           ],
                           tokenIds: nft.tokenIds ? nft.tokenIds : nft.tokenId,
                         },

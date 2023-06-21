@@ -7,10 +7,6 @@ const Discover = () => {
 
   const discover = [
     {
-      name: "Sản phẩm",
-      link: "collection",
-    },
-    {
       name: "Khám phá",
       link: "searchPage",
     },

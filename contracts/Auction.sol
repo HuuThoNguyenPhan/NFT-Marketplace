@@ -7,11 +7,11 @@ contract Auction {
     NFTFactory public nftFactory;
     uint256 public constant MINIMUM_BID_RATE = 110;
     uint256 public AUCTION_SERVICE_FEE_RATE = 3;
-    address payable owner;
+    address payable ownerCT;
 
     constructor(address _nftFactory) {
         nftFactory = NFTFactory(_nftFactory);
-        owner = payable(msg.sender);
+        ownerCT = payable(msg.sender);
     }
 
     struct AuctionInfo {
@@ -52,7 +52,7 @@ contract Auction {
             nftFactory.detailNFT(_tokenId).owner == msg.sender,
             "You do not own this token"
         );
-        nftFactory.transfer(msg.sender, address(this), _tokenId);
+        nftFactory.transfer(msg.sender, address(this), _tokenId,ownerCT);
 
         nftFactory.updateNFT(
             _tokenId,
@@ -60,7 +60,8 @@ contract Auction {
             nftFactory.detailNFT(_tokenId).price,
             payable(msg.sender),
             payable(address(this)),
-            true
+            true,
+            ownerCT
         );
 
         AuctionInfo memory _auction = AuctionInfo(
@@ -80,7 +81,7 @@ contract Auction {
     }
 
     function setFee(uint256 fee) public {
-        require(msg.sender == owner, "use not admin");
+        require(msg.sender == ownerCT, "use not admin");
         AUCTION_SERVICE_FEE_RATE = fee;
     }
 
@@ -137,7 +138,8 @@ contract Auction {
         nftFactory.transfer(
             address(this),
             auction[_auctionId].lastBidder,
-            auction[_auctionId]._tokenId
+            auction[_auctionId]._tokenId,
+            ownerCT
         );
         require(
             auction[_auctionId].lastBidder !=  address(0),
@@ -161,7 +163,8 @@ contract Auction {
             lastBid,
             payable(address(0)),
             payable(auction[_auctionId].lastBidder),
-            false
+            false,
+            ownerCT
         );
 
         auction[_auctionId].completed = true;
@@ -180,7 +183,8 @@ contract Auction {
         nftFactory.transfer(
             address(this),
             auction[_auctionId].auctioneer,
-            auction[_auctionId]._tokenId
+            auction[_auctionId]._tokenId,
+            ownerCT
         );
 
         if (auction[_auctionId].lastBidder != address(0)) {
@@ -195,7 +199,8 @@ contract Auction {
             nftFactory.detailNFT(auction[_auctionId]._tokenId).price,
             payable(address(0)),
             payable(auction[_auctionId].auctioneer),
-            false
+            false,
+            ownerCT
         );
 
         auction[_auctionId].completed = true;
@@ -236,7 +241,7 @@ contract Auction {
     modifier onlyAuctioneer(uint256 _auctionId) {
         require(
             (msg.sender == auction[_auctionId].auctioneer ||
-                msg.sender == owner),
+                msg.sender == ownerCT),
             "Only auctioneer can cancel auction"
         );
         _;

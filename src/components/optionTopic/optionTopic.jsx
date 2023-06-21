@@ -18,6 +18,7 @@ const OptionTopic = ({ setOpen, topics, setTopics }) => {
         <div className={Style.Topic_box_content}>
           {topics.map((el, i) => (
             <Button
+              classStyle={Style.btn_width}
               btnName={el.topicName}
               classStyle2={el.active == true ? Style.Topic_box_btn_Active : ""}
               value={el.topicName}

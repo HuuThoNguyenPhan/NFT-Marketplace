@@ -1,6 +1,8 @@
 const User = require("../models/UserModel");
 const Address = require("../models/address");
 const sendMail = require("../utils/sendMail");
+
+const redis = require("../config/redis-connect");
 exports.createUser = async (req, res) => {
   try {
     const { address } = req.body;
@@ -54,6 +56,10 @@ exports.changeVerified = async (req, res) => {
       unsetObj.description = "";
       unsetObj.reason = "";
       unsetObj.contact = "";
+
+
+      unsetObj.country = "";
+      unsetObj.image = [];
       unsetObj.updatedAt = "";
     }
 
@@ -161,3 +167,25 @@ exports.getAddress = async (req, res) => {
     res.send(err);
   }
 };
+
+exports.test = async (req, res) => {
+  try {
+    const user = {
+      age: "20",
+    };
+    // await redis.setObject("nft2", user);
+    // await redis.updateObject("nft", "age", "12");
+    const results = await redis.getObject("nft2");
+    // await redis.deleteObject("nft1");
+    // console.log(results);
+
+    res.status(200).json({
+      success: true,
+      message: results ?? "k co",
+    });
+  } catch (error) {
+    res.send(error);
+    console.log(error);
+  }
+};
+

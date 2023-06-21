@@ -3,6 +3,8 @@ const Like = require("../models/Like.js");
 const Product = require("../models/ProductModel.js");
 const Report = require("../models/Report.js");
 const Topic = require("../models/Topic.js");
+const { setObject, getAllNftHashes, getAllNftMarketHashes, getAllMyNFTHashes, getAllMyItemListedHashes } = require("../config/redis-connect.js");
+const { NFTMarketplace } = require("../etherium/web3.js");
 exports.createProduct = async (req, res) => {
   try {
     const data = req.body.Metadata;
@@ -20,8 +22,6 @@ exports.createProduct = async (req, res) => {
 exports.changeBreed = async (req, res) => {
   try {
     const { time, ids, limit } = req.body;
-
-    console.log(ids, time);
     ids.forEach(async (id) => {
       if (ids.length == 1) {
         await Product.findByIdAndUpdate(id, {
@@ -114,54 +114,7 @@ exports.getAllContentReport = async (req, res) => {
   }
 };
 
-exports.like = async (req, res) => {
-  try {
-    const { idUser, genealogy } = req.body;
-    const like = await Like.findOne({ user: idUser, genealogy });
-    if (!like) {
-      await Like.create({ user: idUser, genealogy });
-      res.status(200).json({
-        success: true,
-        like: true,
-      });
-    } else {
-      await Like.findOneAndDelete({ user: idUser, genealogy });
-      res.status(200).json({
-        success: true,
-        like: false,
-      });
-    }
-  } catch (err) {
-    res.send(err);
-  }
-};
 
-exports.countLike = async (req, res) => {
-  try {
-    const { g } = req.params;
-    const count = await Like.countDocuments({ genealogy: g }).lean();
-    res.status(200).json({ success: true, count });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
-
-exports.checkLike = async (req, res) => {
-  try {
-    const { idUser, genealogy } = req.body;
-
-    if (!idUser || !genealogy) {
-      throw new Error("Missing required parameters");
-    }
-
-    const like = await Like.exists({ user: idUser, genealogy });
-
-    res.status(200).json({ success: true, like: like });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
 
 exports.getUserLike = async (req, res) => {
   try {
@@ -185,6 +138,15 @@ exports.getTopics = async (req, res) => {
   }
 };
 
+exports.getProductsOnRedis = async (req, res) => {
+  try {
+   const nfts = await NFTMarketplace.getInstance();
+   await nfts.fetchNFTs();
+   res.status(200).json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+}
 exports.changeOnly = async (req, res) => {
   try {
     const pro1 = await Product.find();
@@ -202,3 +164,34 @@ exports.changeOnly = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+exports.getAllproductFromRedis = async (req, res) => {
+  try {
+    let products = await getAllNftMarketHashes();
+    products.sort((a, b) => a.tokenId - b.tokenId);
+    res.status(200).json({ products: products });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+}
+
+exports.getAllMyNFTs = async (req, res) => {
+  try {
+    console.log(req.params.addressWallet)
+    let products = await getAllMyNFTHashes(req.params.addressWallet);
+    products.sort((a, b) => a.tokenId - b.tokenId);
+    res.status(200).json({ products: products });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+}
+
+exports.getAllMyListed = async (req, res) => {
+  try {
+    let products = await getAllMyItemListedHashes(req.params.addressWallet);
+    products.sort((a, b) => a.tokenId - b.tokenId);
+    res.status(200).json({ products: products });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+}

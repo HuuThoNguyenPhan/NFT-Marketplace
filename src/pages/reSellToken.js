@@ -84,16 +84,6 @@ const reSellToken = () => {
         );
     }
   };
-  const fetchNFT = async (tokenURI) => {
-    if (!tokenURI) return;
-
-    const { data } = await axios.get(tokenURI);
-
-    setImage(
-      "https://gateway.pinata.cloud/ipfs/" +
-        data.products.image.slice(7, data.products.image.length)
-    );
-  };
 
   useEffect(() => {
     changeCurrency(1).then((e) => {
@@ -111,7 +101,6 @@ const reSellToken = () => {
   useEffect(() => {
     if (!router.isReady) return;
     const tokenURI = router.query.data[0];
-
     if (!typeof router.query.tokenIds == "string") {
       setTkIds(router.query.tokenIds);
     } else {
@@ -121,7 +110,7 @@ const reSellToken = () => {
     setCount(router.query.data[2]);
     setPrice(router.query.data[4]);
     setTypeFile(router.query.data[5]);
-    fetchNFT(tokenURI);
+    setImage(router.query.data[6])
   }, [router.isReady]);
 
   const handleNumber = (e, setState, check) => {
@@ -141,13 +130,11 @@ const reSellToken = () => {
 
   const resell = async () => {
     try {
-      console.log(price, quantity, limit);
       if (!price || !quantity || !limit) {
         setError("Vui lòng nhập đủ các trường");
         setOpenError(true);
         return;
-      }
-      else if(price == 0){
+      } else if (price == 0) {
         setError("Nhập giá bán lại > 0");
         setOpenError(true);
         return;
@@ -183,7 +170,6 @@ const reSellToken = () => {
         let response = await axios.request(req);
         if (response.status == 200) {
           await createSale("", price, quantity, true, ids);
-          router.push("/author");
         }
       });
     } catch (error) {
@@ -208,7 +194,7 @@ const reSellToken = () => {
               <input
                 value={quantity}
                 onChange={(e) => handleNumber(e, setQuantity, false)}
-                readOnly = {count  == 1 && true}
+                readOnly={count == 1 && true}
               />
             </div>
           </div>
@@ -222,7 +208,7 @@ const reSellToken = () => {
               <input
                 placeholder=""
                 value={limit}
-                readOnly = {count  == 1 && true}
+                readOnly={count == 1 && true}
                 onChange={(e) => handleNumber(e, setLimit, true)}
               />
             </div>

@@ -100,21 +100,20 @@ const NavBar = () => {
         ".NavBar_navbar_container_right_help__1YuG2"
       );
 
-
       if (!navbar.contains(event.target)) {
         setDiscover(false);
         setHelp(false);
         setNotification(false);
         setProfile(false);
       } else if (page.contains(event.target)) {
-        if (discover.contains(event.target)) {
+        if (discover == null || discover.contains(event.target)) {
           setDiscover(false);
           setHelp(false);
           setNotification(false);
           setProfile(false);
         }
       } else if (help.contains(event.target)) {
-        if (listhelp.contains(event.target)) {
+        if (listhelp == null || listhelp.contains(event.target)) {
           setDiscover(false);
           setHelp(false);
           setNotification(false);

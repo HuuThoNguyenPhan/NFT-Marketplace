@@ -2,7 +2,7 @@
 
 .Topic{
     background-color: var(--overlay);
-    width: 100%;
+    width: 140%;
     height: 100%;
     position: fixed;
     z-index: 1111111;
@@ -12,7 +12,7 @@
 
 .Topic_box{
     top: 10%;
-    left: 50%;
+    left: 40%;
     transform: translateX(-100%);
     position: absolute;
     background-color: var(--main-bg-color);
@@ -39,6 +39,10 @@
     color:  var(--icons-color);
 }
 
+.btn_width{
+    align-items: center;
+    width: 10rem;
+}
 @media screen and (max-width: 35em) {
     .Topic_box_content{
         grid-template-columns: 1fr 1fr;
@@ -46,7 +50,7 @@
     .Topic_box{
         top: 20%;
         transform: translateX(-55%);
-        width: 95%;
+        width: 90%;
         padding: 1rem 0;
         height: 50%;
         overflow:scroll;
