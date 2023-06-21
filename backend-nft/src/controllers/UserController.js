@@ -3,6 +3,8 @@ const Address = require("../models/address");
 const sendMail = require("../utils/sendMail");
 const { NFTMarketplace } = require("../etherium/web3");
 const redis = require("../config/redis-connect");
+const { NFTFactory } = require("../etherium/web3_nft");
+
 exports.createUser = async (req, res) => {
   try {
     const { address } = req.body;
@@ -174,10 +176,27 @@ exports.changeListingPrice = async (req, res) => {
       return res.status(400).json({ success: false });
     }
     const nftMarketplace = await NFTMarketplace.getInstance();
-    nftMarketplace.changeListingPrice(eth);
+    await nftMarketplace.changeListingPrice(eth);
 
     res.status(200).json({
       success: true,
+    });
+  } catch (err) {
+    res.send(err);
+  }
+};
+exports.infor = async (req, res) => {
+  try {
+    const nft = await NFTFactory.getInstance();
+    const infor = await nft.getBalance();
+
+    results = {
+      nft: infor[0],
+      auction: infor[1],
+    };
+    res.status(200).json({
+      success: true,
+      results,
     });
   } catch (err) {
     res.send(err);

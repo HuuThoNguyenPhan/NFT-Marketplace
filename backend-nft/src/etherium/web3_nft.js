@@ -87,7 +87,14 @@ class NFTFactory {
     const url = await this.contract.getTokenURI(tokenid);
     return url;
   }
-
+  async getBalance() {
+    const contractAddress = await Address.findById("646b745a80a41c027c2ba7bd");
+    const address = contractAddress.nftmarketplaceAddress;
+    const address2 = contractAddress.auctionAddress;
+    const balance = await this.contract.balanceOf(address);
+    const balance2 = await this.contract.balanceOf(address2);
+    return [ethers.formatEther(balance), ethers.formatEther(balance2)];
+  }
   async useRedis(
     tokenId,
     seller,

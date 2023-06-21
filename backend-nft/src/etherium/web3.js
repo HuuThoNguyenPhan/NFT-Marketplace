@@ -67,12 +67,8 @@ class NFTMarketplace {
     await buyTx.wait();
   }
 
-  async getBalance() {
-    const balance = await this.provider.getBalance(this.wallet.address);
-    return ethers.formatEther(balance);
-  }
   async changeListingPrice(eth) {
-    const price = ethers.utils.parseUnits(eth.price.toString(), "ether");
+    const price = ethers.utils.parseUnits(eth.toString(), "ether");
     await this.contract.updateListingPrice(price);
   }
 

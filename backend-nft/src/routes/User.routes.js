@@ -7,6 +7,8 @@ const {
   addressUpdate,
   getAddress,
   getUserDetails,
+  changeListingPrice,
+  infor,
   test,
 } = require("../controllers/UserController");
 
@@ -19,5 +21,7 @@ router.route("/user/changeVerified").put(changeVerified);
 router.route("/address/update").put(addressUpdate);
 router.route("/address/:addressWallet").get(getUserDetails);
 router.route("/addresses").get(getAddress);
+router.route("/admin/infor").get(infor);
+router.route("/admin/changeListingPrice").get(changeListingPrice);
 
 module.exports = router;
