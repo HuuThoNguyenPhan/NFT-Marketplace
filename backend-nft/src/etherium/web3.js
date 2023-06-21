@@ -19,7 +19,6 @@ class NFTMarketplace {
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
     const wallet = new ethers.Wallet(privateKey, provider);
     this.contract = new ethers.Contract(contractAddress, abi, wallet);
-
   }
   async useRedis(
     tokenId,
@@ -41,12 +40,16 @@ class NFTMarketplace {
       sold,
       royalties,
       author,
-      isauction
+      isauction,
     };
     if (updateProperties) {
       updateObject(`nft${tokenId}`, "sold", sold);
       updateObject(`nft${tokenId}`, "seller", seller);
-      updateObject(`nft${tokenId}`, "owner", "0x0000000000000000000000000000000000000000");
+      updateObject(
+        `nft${tokenId}`,
+        "owner",
+        "0x0000000000000000000000000000000000000000"
+      );
     } else {
       idMG = idMG.toString().slice(38);
       const product = await Product.findById(idMG);
@@ -67,6 +70,10 @@ class NFTMarketplace {
   async getBalance() {
     const balance = await this.provider.getBalance(this.wallet.address);
     return ethers.formatEther(balance);
+  }
+  async changeListingPrice(eth) {
+    const price = ethers.utils.parseUnits(eth.price.toString(), "ether");
+    await this.contract.updateListingPrice(price);
   }
 
   async fetchNFTs() {

@@ -1,7 +1,7 @@
 const User = require("../models/UserModel");
 const Address = require("../models/address");
 const sendMail = require("../utils/sendMail");
-
+const { NFTMarketplace } = require("../etherium/web3");
 const redis = require("../config/redis-connect");
 exports.createUser = async (req, res) => {
   try {
@@ -35,10 +35,9 @@ exports.getAllUser = async (req, res) => {
 };
 
 exports.changeVerified = async (req, res) => {
-
   try {
-    const {addressWallet, verified, message } = req.body;
-    const user = await User.findOne({ addressWallet});
+    const { addressWallet, verified, message } = req.body;
+    const user = await User.findOne({ addressWallet });
     if (!user) {
       return res
         .status(404)
@@ -57,20 +56,21 @@ exports.changeVerified = async (req, res) => {
       unsetObj.reason = "";
       unsetObj.contact = "";
 
-
       unsetObj.country = "";
       unsetObj.image = [];
       unsetObj.updatedAt = "";
     }
 
     if (Object.keys(unsetObj).length > 0) {
-
       await sendMail({
         email: user.contact,
         subject: `Kết quả xác thực tài khoản`,
         message,
       });
-      await User.updateOne({ addressWallet }, { $set: updateObj, $unset: unsetObj });
+      await User.updateOne(
+        { addressWallet },
+        { $set: updateObj, $unset: unsetObj }
+      );
     } else {
       await sendMail({
         email: user.contact,
@@ -167,6 +167,22 @@ exports.getAddress = async (req, res) => {
     res.send(err);
   }
 };
+exports.changeListingPrice = async (req, res) => {
+  try {
+    const { eth } = await req.body;
+    if (!eth) {
+      return res.status(400).json({ success: false });
+    }
+    const nftMarketplace = await NFTMarketplace.getInstance();
+    nftMarketplace.changeListingPrice(eth);
+
+    res.status(200).json({
+      success: true,
+    });
+  } catch (err) {
+    res.send(err);
+  }
+};
 
 exports.test = async (req, res) => {
   try {
@@ -188,4 +204,3 @@ exports.test = async (req, res) => {
     console.log(error);
   }
 };
-

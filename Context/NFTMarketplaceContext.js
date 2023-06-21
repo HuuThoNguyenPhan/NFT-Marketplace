@@ -92,7 +92,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
             address: account[0],
           }
         );
-        console.log(res);
         setIdAccount(res.data.user._id);
       });
       const accounts = await window.ethereum.request({
@@ -100,6 +99,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
       });
 
       if (accounts.length) {
+        sessionStorage.setItem("myAccount", "exist");
         setCurrentAccount(accounts[0]);
       } else {
         setError("Không tìm thấy tài khoản");
@@ -155,20 +155,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
       return price;
     }
   }
-  // useEffect(() => {
-  //   // window.addEventListener("beforeunload", (event) => {
-  //   //   event.preventDefault();
-  //   //   event.returnValue = "";
-  //   //   localStorage.clear();
-  //   //   if (sessionStorage.getItem("myAccount")) {
-  //   //     localStorage.setItem("myAccount", "exist");
-  //   //     sessionStorage.setItem("myAccount", "exist");
-  //   //   }
-  //   // });
-
-  //   checkIfWalletConnected();
-  //   connectingWithSmartContract();
-  // }, []);
+  useEffect(() => {
+    if (sessionStorage.getItem("myAccount")) {
+      checkIfWalletConnected();
+      connectingWithSmartContract();
+    }
+  }, []);
 
   //---Hàm kết nối ví
   const connectWallet = async () => {
@@ -360,15 +352,13 @@ export const NFTMarketplaceProvider = ({ children }) => {
     royalties
   ) => {
     try {
-
-
       const price = ethers.utils.parseUnits(formInputPrice.toString(), "ether");
 
       const contract = await connectingWithSmartContract(fetchContract);
 
       const listingPrice = await contract.getListingPrice();
-      console.log(formInputPrice.toString())
-      
+      console.log(formInputPrice.toString());
+
       const transaction = !isReselling
         ? await contract.createToken(url, price, royalties, isAuction, {
             value: listingPrice.toString(),
@@ -892,10 +882,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
       setOpenError(true);
     }
   };
-
-  // useEffect(() => {
-  //   fetchMyNFTsOrListedNFTs();
-  // }, []);
 
   //---BUY NFTs FUNCTION
   const buyNFT = async (nft, limit, cartLenght, deleteCart) => {

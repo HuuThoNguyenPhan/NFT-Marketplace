@@ -16,7 +16,7 @@ import { NFTMarketplaceContext } from "../../../../Context/NFTMarketplaceContext
 const NFTCardTwo = ({ NFTData }) => {
   const [like, setLike] = useState(false);
   const [likeInc, setLikeInc] = useState(21);
-  const { addToCart, currentAccount, setError, setOpenError,formatPrice } =
+  const { addToCart, currentAccount, setError, setOpenError, formatPrice } =
     useContext(NFTMarketplaceContext);
   const handelAddtoCart = (event, el) => {
     event.preventDefault();
@@ -114,16 +114,19 @@ const NFTCardTwo = ({ NFTData }) => {
         >
           <div className={Style.NFTCardTwo_box} key={i + 1}>
             <div className={Style.NFTCardTwo_box_like}>
-              {!el.auctionId && el.only == true && (
-                <div className={Style.NFTCardTwo_box_like_box_box}>
-                  <button
-                    className={Style.NFTCardTwo_btnBuy_addToCart}
-                    onClick={(event) => handelAddtoCart(event, el)}
-                  >
-                    <AiOutlineShoppingCart color="white" size={20} />
-                  </button>
-                </div>
-              )}
+              {!el.auctionId &&
+                el.seller.toLowerCase() != currentAccount.toLowerCase() &&
+                el.owner.toLowerCase() != currentAccount.toLowerCase() &&
+                el.only == true && (
+                  <div className={Style.NFTCardTwo_box_like_box_box}>
+                    <button
+                      className={Style.NFTCardTwo_btnBuy_addToCart}
+                      onClick={(event) => handelAddtoCart(event, el)}
+                    >
+                      <AiOutlineShoppingCart color="white" size={20} />
+                    </button>
+                  </div>
+                )}
             </div>
 
             {renderPreview(el.typeFile, el.image)}
@@ -139,7 +142,7 @@ const NFTCardTwo = ({ NFTData }) => {
             <div className={Style.NFTCardTwo_box_price}>
               <div className={Style.NFTCardTwo_box_price_box}>
                 <small>Giá hiện tại</small>
-                <p>{formatPrice(el.price,7)} ETH</p>
+                <p>{formatPrice(el.price, 7)} ETH</p>
               </div>
             </div>
           </div>

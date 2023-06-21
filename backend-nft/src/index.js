@@ -20,7 +20,6 @@ const startServer = async () => {
     app.listen(port, () =>
       console.log(`Server started on port http://localhost:${port}`)
     );
-    const nftMarketplace = await NFTMarketplace.getInstance();
     const nftFactory = await NFTFactory.getInstance();
   } catch (error) {
     console.error(error);

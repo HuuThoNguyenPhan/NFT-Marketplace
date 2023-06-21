@@ -3,7 +3,13 @@ const Like = require("../models/Like.js");
 const Product = require("../models/ProductModel.js");
 const Report = require("../models/Report.js");
 const Topic = require("../models/Topic.js");
-const { setObject, getAllNftHashes, getAllNftMarketHashes, getAllMyNFTHashes, getAllMyItemListedHashes } = require("../config/redis-connect.js");
+const {
+  setObject,
+  getAllNftHashes,
+  getAllNftMarketHashes,
+  getAllMyNFTHashes,
+  getAllMyItemListedHashes,
+} = require("../config/redis-connect.js");
 const { NFTMarketplace } = require("../etherium/web3.js");
 exports.createProduct = async (req, res) => {
   try {
@@ -114,8 +120,6 @@ exports.getAllContentReport = async (req, res) => {
   }
 };
 
-
-
 exports.getUserLike = async (req, res) => {
   try {
     const { genealogy } = req.params;
@@ -140,13 +144,13 @@ exports.getTopics = async (req, res) => {
 
 exports.getProductsOnRedis = async (req, res) => {
   try {
-   const nfts = await NFTMarketplace.getInstance();
-   await nfts.fetchNFTs();
-   res.status(200).json({ success: true });
+    const nfts = await NFTMarketplace.getInstance();
+    await nfts.fetchNFTs();
+    res.status(200).json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
-}
+};
 exports.changeOnly = async (req, res) => {
   try {
     const pro1 = await Product.find();
@@ -173,18 +177,17 @@ exports.getAllproductFromRedis = async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
-}
+};
 
 exports.getAllMyNFTs = async (req, res) => {
   try {
-    console.log(req.params.addressWallet)
     let products = await getAllMyNFTHashes(req.params.addressWallet);
     products.sort((a, b) => a.tokenId - b.tokenId);
     res.status(200).json({ products: products });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
-}
+};
 
 exports.getAllMyListed = async (req, res) => {
   try {
@@ -194,4 +197,4 @@ exports.getAllMyListed = async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
-}
+};

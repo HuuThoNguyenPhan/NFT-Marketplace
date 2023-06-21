@@ -20,23 +20,7 @@ class NFTFactory {
     this.contract = new ethers.Contract(contractAddress, abi, wallet);
     this.registerMarketItemCreatedListener("MarketItemCreated", null);
     this.registerMarketItemCreatedListener("updateSale", true);
-  }
-  static async getInstance() {
-    if (!NFTFactory.instance) {
-      const contractAddress = await Address.findById(
-        "646b745a80a41c027c2ba7bd"
-      );
-      const address = contractAddress.nftFactory;
-      console.log("second");
-      const privateKey =
-        "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
-      NFTFactory.instance = new NFTFactory(address, privateKey);
-    }
-    return NFTFactory.instance;
-  }
-  async getTokenUrl(tokenid) {
-    const url = await this.contract.getTokenURI(tokenid);
-    return url;
+    console.log("dang ky su kien");
   }
   registerMarketItemCreatedListener(nameEvent, updateProperties) {
     this.contract.on(
@@ -54,7 +38,7 @@ class NFTFactory {
       ) => {
         price = ethers.formatEther(price);
         if (nameEvent == "MarketItemCreated") {
-          console.log("m")
+          console.log("mmmmmmmmmmmmmmmmmmmmmmmmmmmm");
           this.useRedis(
             tokenId,
             seller,
@@ -68,7 +52,7 @@ class NFTFactory {
             isauction
           );
         } else if (nameEvent == "updateSale") {
-          console.log("u")
+          console.log("uuuuuuuuuuuuuuuuuuuuu");
           this.useRedis(
             tokenId,
             seller,
@@ -79,11 +63,29 @@ class NFTFactory {
             updateProperties,
             royalties,
             author,
-            idMG,
+            idMG
           );
         }
       }
     );
+  }
+  static async getInstance() {
+    if (!NFTFactory.instance) {
+      const contractAddress = await Address.findById(
+        "646b745a80a41c027c2ba7bd"
+      );
+      const address = contractAddress.nftFactory;
+
+      const privateKey =
+        "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+      NFTFactory.instance = new NFTFactory(address, privateKey);
+      console.log("chay get instance");
+    }
+    return NFTFactory.instance;
+  }
+  async getTokenUrl(tokenid) {
+    const url = await this.contract.getTokenURI(tokenid);
+    return url;
   }
 
   async useRedis(
@@ -98,24 +100,24 @@ class NFTFactory {
     author,
     isauction
   ) {
-    const nftObject = {
-      tokenId,
-      seller,
-      owner,
-      price,
-      sold,
-      royalties,
-      author,
-      isauction,
-    };
     if (updateProperties) {
       updateObject(`nft${tokenId}`, "sold", sold);
       updateObject(`nft${tokenId}`, "price", price);
       updateObject(`nft${tokenId}`, "seller", seller);
       updateObject(`nft${tokenId}`, "isauction", isauction);
       updateObject(`nft${tokenId}`, "owner", owner);
-      console.log(sold)
+      console.log(sold);
     } else {
+      const nftObject = {
+        tokenId,
+        seller,
+        owner,
+        price,
+        sold,
+        royalties,
+        author,
+        isauction,
+      };
       idMG = idMG.toString().slice(38);
       const product = await Product.findById(idMG);
 

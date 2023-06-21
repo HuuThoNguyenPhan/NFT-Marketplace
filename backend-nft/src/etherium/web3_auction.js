@@ -28,15 +28,16 @@ class NFTAuction {
   async autoFinishAuction() {
     const a = true;
     const auctions = await this.contract.getAuctionByStatus(a);
-    console.log(auctions);
+
     const currentTime = new Date().getTime();
     for (const auction of auctions) {
       const { auctionId, endTime, lastBidder } = auction;
       if (endTime > currentTime) continue;
       const method =
         lastBidder === "0x0000000000000000000000000000000000000000"
-          ? "cancelAuction"
+          ? "cancleAuction"
           : "finishAuction";
+      console.log(method);
       await this.contract[method](auctionId);
     }
   }
