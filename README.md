@@ -1,4 +1,5 @@
 # Xây dựng Web/App thị sàn giao dịch các sản phẩm NFT (Non-fungible token) cho phép người dùng đăng, mua, bán và đấu giá các sản phẩm NFT
+## Lệnh chạy bài:
 ## npm i
 ## npx hardhat node
 ## npx hardhat run scripts/deploy.js --network localhost
